@@ -1,0 +1,371 @@
+---
+title: "Make-MESA-TOPMed-multi-omics"
+author: "LekkiWood (LekkiWood@Gmail.com)"
+date: today
+format:
+  html:
+    toc: true
+    toc-depth: 3
+execute:
+  echo: false
+  warning: false
+  message: false
+  # ensure chunks run from the project root (where _targets/ lives)
+  dir: project
+engine: knitr
+---
+
+```{r}
+#| label: load-packages
+
+
+## Load targets
+if (!requireNamespace("targets", quietly = TRUE)) {
+  stop("The {targets} package is not installed/available in this render session.")
+}
+
+## Load knitr
+if (!requireNamespace("knitr", quietly = TRUE)) {
+  stop("The {knitr} package is not installed/available in this render session.")
+}
+
+```
+
+# 1. Unresolved concerns
+
+```{r}
+#| label: load-file-info
+
+QC_info <- targets::tar_read(build_metabs_QC)
+Metabfile_out_name <- targets::tar_read(long_metabtable_filename)
+```
+
+-   The C18 assay has a smaller N than some others
+
+-   Duplicated SHARe IDs (sidno) / exam combinations (advice from DCC / lab = exclude all).
+
+-   Some SHARe IDs are still missing from the bridging file
+
+# 2. Output File 1: Formated Metabolite Assay Tables
+
+## Input filenames
+
+### Raw metabolite tables
+
+-   A table of metabolite abundances from the amide assay: `{r} print(unlist(strsplit(QC_info$filenames$raw_amide_file_name, split="/"))[7])`
+
+<!-- -->
+
+-   A table of metabolite abundances from the C8-pos assay: `{r} print(unlist(strsplit(QC_info$filenames$raw_C8_file_name, split="/"))[7])`
+
+-   A table of metabolite abundances from the C18-neg assay: `{r} print(unlist(strsplit(QC_info$filenames$raw_C18_file_name, split="/"))[7])`
+
+-   A table of metabolite abundances from the HILIC assay: `{r} print(unlist(strsplit(QC_info$filenames$raw_HILIC_file_name, split="/"))[7])`
+
+### Sample info files
+
+-   Sample information for the amide assay: `{r} print(unlist(strsplit(QC_info$filenames$raw_amide_info_file_name, split="/"))[7])`
+
+-   Sample information for the C8-pos assay: `{r} print(unlist(strsplit(QC_info$filenames$raw_C8_info_file_name, split="/"))[7])`
+
+-   Sample information for the C18-neg assay: `{r} print(unlist(strsplit(QC_info$filenames$raw_C18_info_file_name, split="/"))[7])`
+
+-   Sample information for the HILIC assay: `{r} print(unlist(strsplit(QC_info$filenames$raw_HILIC_info_file_name, split="/"))[7])`
+
+### Bridging file
+
+-   A file to bridge SHARe ids (sidno) with MESA IDs (idno) `{r} print(unlist(strsplit(QC_info$filenames$raw_bridgingfile_file_name, split="/"))[7])`
+
+And creates the following:
+
+## Formatting metabolite tables
+
+### Amide
+
+-   The amide sample info file contained information on N=`{r} QC_info$sample_info_dims$sample_info_dims_amide[1]` TOMIDs (each corresponding to one participant's abundances at one exam).
+
+-   Metabolites were renamed according to the following rules:
+
+    -   For known compounds:
+
+        -   The compound name (supplied by the lab) was transformed using the "make.names" command with unique=TRUE, and prefixed with the string "Amide\_".
+
+    -   The amide assay only has known compounds.
+
+-   When the TOMIDs in the sample info file were extracted from the original metabolite table, there were N=`{r} QC_info$phase1_dims$phase1_dims_amide` TOMIDs remaining.^1^
+
+-   We searched for duplicated TOMIDs, and N=`{r} QC_info$duplicate_TOMIDs$duplicate_column_names_amide` were found.^1^
+
+-   One value for TOM148122 had an incorrect rounding problem (1+2559:2584.03935869994933). This was recoded to missing.
+
+-   The the table was transposed. The following duplicates were identified:
+
+    ```{r}
+
+    #| label: tbl-Amide-dupes
+    #| tbl-cap: "Duplicate metabolite abundances in metabolites from amide assay, supplied by MESA DCC"
+    #| tbl-colwidths: [50, 50] # Example: First column 30%, second 70%
+
+    knitr::kable(QC_info$duplicates_in_raw_tables$amide_dupes, format="html")
+
+    ```
+
+    The duplicates were removed leaving a final table of N= `{r} QC_info$final_table_dims$final_table_dims_amide[2]-4` metabolites across `{r} QC_info$final_table_dims$final_table_dims_amide[1]` observations.
+
+### C8
+
+-   The C8 sample info file contained information on N=`{r} QC_info$sample_info_dims$sample_info_dims_C8[1]` TOMIDs (each corresponding to one participant's abundances at one exam).
+
+-   Metabolites were renamed according to the following rules:
+
+    -   For known compounds:
+
+        -   The compound name (supplied by the lab) was transformed using the "make.names" command with unique=TRUE, and prefixed with the string "C8\_".
+
+    -   For unknown compounds:
+
+        -   The lab ID (arbitrarily assigned by The Broad) assigned within the X01 study (variable: Compound_ID_X01; arbitrarily chosen from the MESA2 and MESA PILOT names by Lekki) was prefixed with the string "C8\_".
+
+-   When the TOMIDs in the sample info file were extracted from the original metabolite table, there were N=`{r} QC_info$phase1_dims$phase1_dims_C8` TOMIDs remaining.^1^
+
+-   We searched for duplicated TOMIDs, and N=`{r} QC_info$duplicate_TOMIDs$duplicate_column_names_C8` were found.^1^
+
+-   The the table was transposed. The following duplicates were identified:
+
+    ```{r}
+
+    #| label: tbl-C8-dupes 
+    #| tbl-cap: "Duplicate metabolite abundances in metabolites from C8 assay, supplied by MESA DCC" #| tbl-colwidths: [50, 50] # Example: First column 30%, second 70%
+
+    knitr::kable(QC_info$duplicates_in_raw_tables$C8_dupes, format="html")
+    ```
+
+-   The duplicates were removed leaving a final table of N=`{r} QC_info$final_table_dims$final_table_dims_C8[2] - 4` metabolites across N=`{r} QC_info$final_table_dims$final_table_dims_C8[1]` observations.
+
+### C18
+
+-   The C18 sample info file contained information on N=`{r} QC_info$sample_info_dims$sample_info_dims_C18[1]` TOMIDs (each corresponding to one participant's abundances at one exam).
+
+-   Metabolites were renamed according to the following rules:
+
+    -   For known compounds:
+
+        -   The compound name (supplied by the lab) was transformed using the "make.names" command with unique=TRUE, and prefixed with the string "C18\_".
+
+    -   For unknown compounds:
+
+        -   The lab ID (arbitrarily assigned by The Broad) assigned within the X01 study (variable: Compound_ID_X01; arbitrarily chosen from the MESA2 and MESA PILOT names by Lekki) was prefixed with the string "C18\_".
+
+-   When the TOMIDs in the sample info file were extracted from the original metabolite table, there were N=`{r} QC_info$phase1_dims$phase1_dims_C18` TOMIDs remaining.^1^
+
+-   We searched for duplicated TOMIDs, and N=`{r} QC_info$duplicate_TOMIDs$duplicate_column_names_C18` were found.^1^
+
+-   The the table was transposed. The following duplicates were identified:
+
+    ```{r}
+
+    #| label: tbl-C18-dupes 
+    #| tbl-cap: "Duplicate metabolite abundances in metabolites from C18 assay, supplied by MESA DCC" #| tbl-colwidths: [50, 50] # Example: First column 30%, second 70%
+
+    knitr::kable(QC_info$duplicates_in_raw_tables$C18_dupes, format="html")
+    ```
+
+-   The duplicates were removed leaving a final table of N=`{r} QC_info$final_table_dims$final_table_dims_C18[2] - 4` metabolites across N=`{r} QC_info$final_table_dims$final_table_dims_C18[1]` observations.
+
+### HILIC
+
+-   The HILIC sample info file contained information on N=`{r} QC_info$sample_info_dims$sample_info_dims_HILIC[1]` TOMIDs (each corresponding to one participant's abundances at one exam).
+
+-   Metabolites were renamed according to the following rules:
+
+    -   For known compounds:
+
+        -   The compound name (supplied by the lab) was transformed using the "make.names" command with unique=TRUE, and prefixed with the string "HILIC\_".
+
+    -   For unknown compounds:
+
+        -   The lab ID (arbitrarily assigned by The Broad) assigned within the X01 study (variable: Compound_ID_X01; arbitrarily chosen from the MESA2 and MESA PILOT names by Lekki) was prefixed with the string "HILIC\_".
+
+-   When the TOMIDs in the sample info file were extracted from the original metabolite table, there were N=`{r} QC_info$phase1_dims$phase1_dims_HILIC` TOMIDs remaining.^1^
+
+-   We searched for duplicated TOMIDs, and N=`{r} QC_info$duplicate_TOMIDs$duplicate_column_names_HILIC` were found.^1^
+
+-   The the table was transposed. The following duplicates were identified:
+
+    ```{r}
+
+    #| label: tbl-HILIC-dupes 
+    #| tbl-cap: "Duplicate metabolite abundances in metabolites from HILIC assay, supplied by MESA DCC" #| tbl-colwidths: [50, 50] # Example: First column 30%, second 70%
+
+    knitr::kable(QC_info$duplicates_in_raw_tables$HILIC_dupes, format="html")
+    ```
+
+-   The duplicates were removed leaving a final table of N=`{r} QC_info$final_table_dims$final_table_dims_HILIC[2] - 4` metabolites across N=`{r} QC_info$final_table_dims$final_table_dims_HILIC[1]` observations.
+
+## Binding formatted metabolite assay tables into one metabolite table
+
+-   The data from the 4 assays were merged, yielding information on N= `{r} print(QC_info$final_df$metabs_final_dim[2] -4)` compounds, across N= `{r} print(QC_info$final_df$metabs_final_dim[1])` observations.
+
+-   Those observations represented N=`{r} QC_info$final_df_info$metabs_final_uniqueid` unique individuals, with data on N=`{r} QC_info$final_df_info$metabs_final_uniqueid_E1` individuals at exam 1, N=`{r} QC_info$final_df_info$metabs_final_uniqueid_E5` at exam 5, and N=`{r} QC_info$final_df_info$metabs_final_uniqueid_E6` at exam 6.
+
+-   MESA SHARe IDs were merged in to the final metabolite table using the bridging file above. The following SHARe IDs were missing from the bridging table: `{r} print(QC_info$final_df_info$miss_sidno)` .
+
+-   The final metabolite table for analysis is in long form, and has `{r} QC_info$final_df_info$final_metabs_merged_dim[1]` observations on `{r} QC_info$final_df_info$final_metabs_merged_dim[2]` variables (5 variables are not metabolites: sidno, subject_id, TOM_ID, exam, idno).
+
+## Output files
+
+### Metabolite table
+
+The metabolite table was saved in long form with the file name `{r} print(Metabfile_out_name)`^2^
+
+# Output File 2: Mapping file
+
+```{r}
+
+#| label: read-in-mapping-QC-info
+
+QC_info_mapping <- targets::tar_read(build_mapping_QC)
+mapping_filename <- targets::tar_read(mapping_filename)
+```
+
+## Formatting
+
+### Amide
+
+-   Variables were renamed as follows:
+
+    -   "Presence MESA X01" renamed to: "Included_X01" (coded 1=yes, 0 = no)
+
+    -   "Presence MESA PILOT" renamed to: "Included_Pilot" (coded 1=yes, 0 = no)
+
+    -   "Presence MESA MESA2" renamed to: "Included_MESA2" (coded 1=yes, 0 = no)
+
+    -   "DB_ID" renamed to "HMDB_ID".
+
+-   The original metabolite name (where known) from the lab was preserved as the variable 'Original_Metabolite_Name'.
+
+-   Metabolites were renamed according to the following rules:
+
+    -   For known compounds:
+
+        -   The compound name (supplied by the lab) was transformed using the "make.names" command with unique=TRUE, and prefixed with the string "Amide\_".
+
+-   A variable "Known_Compound" was created to indicate whether the compound had been assigned a name as of `{r} format(Sys.Date(), "%A, %B, %d, %Y")`^2^ (coding 1= yes, 0=no) \[amide is currently all known compounds).
+
+    -   The amide assay has N= `{r} print(QC_info_mapping$knowns$amide_knowns[1,2])` known compounds and no unknown compounds.
+
+-   A variable "Compound_ID_X01" was created allow this to map on to other assays which have unknown compounds included.
+
+### C8
+
+-   The following variables were created:
+
+    -   "Presence MESA X01" (coded 1)
+
+    -   "Presence MESA PILOT" (coded 1)
+
+    -   "Presence MESA MESA2" (coded 1).
+
+-   The original metabolite name (where known) from the lab was preserved as the variable 'Original_Metabolite_Name'
+
+-   Metabolites were renamed according to the following rules:
+
+    -   For known compounds:
+
+        -   The compound name (supplied by the lab) was transformed using the "make.names" command with unique=TRUE, and prefixed with the string "C8\_".
+
+    -   For unknown compounds:
+
+        -   The lab ID (arbitrarily assigned by The Broad) assigned within the X01 study (variable: Compound_ID_X01; arbitrarily chosen from the MESA2 and MESA PILOT names by Lekki) was prefixed with the string "C8\_".
+
+-   A variable "Known_Compound" was created to indicate whether the compound had been assigned a name as of `{r} format(Sys.Date(), "%A, %B, %d, %Y")`^2^ (coding 1= yes, 0=no).
+
+    -   The C8 assay has N= `{r} print(QC_info_mapping$knowns$C8_knowns[2,2])` known compounds and `{r} print(QC_info_mapping$knowns$C8_knowns[1,2])` unknown compounds.
+
+### C18
+
+-   The following variables were created:
+
+    -   "Presence MESA X01" (coded 1)
+
+    -   "Presence MESA PILOT" (coded 1)
+
+    -   "Presence MESA MESA2" (coded 1).
+
+-   The original metabolite name (where known) from the lab was preserved as the variable 'Original_Metabolite_Name'
+
+-   Metabolites were renamed according to the following rules:
+
+    -   For known compounds:
+
+        -   The compound name (supplied by the lab) was transformed using the "make.names" command with unique=TRUE, and prefixed with the string "C18\_".
+
+    -   For unknown compounds:
+
+        -   The lab ID (arbitrarily assigned by The Broad) assigned within the X01 study (variable: Compound_ID_X01; arbitrarily chosen from the MESA2 and MESA PILOT names by Lekki) was prefixed with the string "C18\_".
+
+-   A variable "Known_Compound" was created to indicate whether the compound had been assigned a name as of `{r} format(Sys.Date(), "%A, %B, %d, %Y")`^2^ (coding 1= yes, 0=no).
+
+    -   The C18 assay has N= `{r} print(QC_info_mapping$knowns$C18_knowns[2,2])` known compounds and `{r} print(QC_info_mapping$knowns$C18_knowns[1,2])` unknown compounds.
+
+### HILIC
+
+-   The following variables were created:
+
+    -   "Presence MESA X01" (coded 1)
+
+    -   "Presence MESA PILOT" (coded 1)
+
+    -   "Presence MESA MESA2" (coded 1).
+
+-   The original metabolite name (where known) from the lab was preserved as the variable 'Original_Metabolite_Name'
+
+-   Metabolites were renamed according to the following rules:
+
+    -   For known compounds:
+
+        -   The compound name (supplied by the lab) was transformed using the "make.names" command with unique=TRUE, and prefixed with the string "HILIC\_".
+
+    -   For unknown compounds:
+
+        -   The lab ID (arbitrarily assigned by The Broad) assigned within the X01 study (variable: Compound_ID_X01; arbitrarily chosen from the MESA2 and MESA PILOT names by Lekki) was prefixed with the string "HILIC\_".
+
+-   A variable "Known_Compound" was created to indicate whether the compound had been assigned a name as of `{r} format(Sys.Date(), "%A, %B, %d, %Y")`^2^ (coding 1= yes, 0=no).
+
+    -   The HILIC assay has N= `{r} print(QC_info_mapping$knowns$HILIC_knowns[2,2])` known compounds and `{r} print(QC_info_mapping$knowns$HILIC_knowns[1,2])` unknown compounds.
+
+## Binding formatted mapping files into one mapping file
+
+-   The mapping information from the 4 assays were row bound.
+
+-   The final mapping file has information on `{r} print(QC_info_mapping$knowns$all_knowns[2,2])` known compounds and `{r} print(QC_info_mapping$knowns$all_knowns[1,2])` unknown compounds
+
+## Output files
+
+### Mapping file
+
+The metabolite table was saved in long form with the file name `{r} print(mapping_filename)`^2^
+
+# Notes
+
+## Footnotes
+
+^1^Missing, or "NULL" values here arise from using a standard script for all QC to flag potential issues. Missing, or "NULL" values typically indicate a lack of potentially concerning issue.
+
+^2^Dates are dynamic
+
+## Session info
+
+The exact session information used for this analysis
+
+```{r}
+
+#| label: session-info
+
+# Prefer the detailed sessioninfo output; otherwise fall back to base.
+if (requireNamespace("sessioninfo", quietly = TRUE)) {
+  sessioninfo::session_info()
+} else {
+  sessionInfo()
+}
+```

@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="LekkiWood (LekkiWood@Gmail.com)">
+<meta name="dcterms.date" content="2025-10-16">
+
+<title>Make-MESA-TOPMed-multi-omics</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="Make-MESA-TOPMed-Metabolite-Table-README_files/libs/clipboard/clipboard.min.js"></script>
+<script src="Make-MESA-TOPMed-Metabolite-Table-README_files/libs/quarto-html/quarto.js"></script>
+<script src="Make-MESA-TOPMed-Metabolite-Table-README_files/libs/quarto-html/popper.min.js"></script>
+<script src="Make-MESA-TOPMed-Metabolite-Table-README_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="Make-MESA-TOPMed-Metabolite-Table-README_files/libs/quarto-html/anchor.min.js"></script>
+<link href="Make-MESA-TOPMed-Metabolite-Table-README_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="Make-MESA-TOPMed-Metabolite-Table-README_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="Make-MESA-TOPMed-Metabolite-Table-README_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="Make-MESA-TOPMed-Metabolite-Table-README_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="Make-MESA-TOPMed-Metabolite-Table-README_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body>
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#unresolved-concerns" id="toc-unresolved-concerns" class="nav-link active" data-scroll-target="#unresolved-concerns">1. Unresolved concerns</a></li>
+  <li><a href="#output-file-1-formated-metabolite-assay-tables" id="toc-output-file-1-formated-metabolite-assay-tables" class="nav-link" data-scroll-target="#output-file-1-formated-metabolite-assay-tables">2. Output File 1: Formated Metabolite Assay Tables</a>
+  <ul class="collapse">
+  <li><a href="#input-filenames" id="toc-input-filenames" class="nav-link" data-scroll-target="#input-filenames">Input filenames</a>
+  <ul class="collapse">
+  <li><a href="#raw-metabolite-tables" id="toc-raw-metabolite-tables" class="nav-link" data-scroll-target="#raw-metabolite-tables">Raw metabolite tables</a></li>
+  <li><a href="#sample-info-files" id="toc-sample-info-files" class="nav-link" data-scroll-target="#sample-info-files">Sample info files</a></li>
+  <li><a href="#bridging-file" id="toc-bridging-file" class="nav-link" data-scroll-target="#bridging-file">Bridging file</a></li>
+  </ul></li>
+  <li><a href="#formatting-metabolite-tables" id="toc-formatting-metabolite-tables" class="nav-link" data-scroll-target="#formatting-metabolite-tables">Formatting metabolite tables</a>
+  <ul class="collapse">
+  <li><a href="#amide" id="toc-amide" class="nav-link" data-scroll-target="#amide">Amide</a></li>
+  <li><a href="#c8" id="toc-c8" class="nav-link" data-scroll-target="#c8">C8</a></li>
+  <li><a href="#c18" id="toc-c18" class="nav-link" data-scroll-target="#c18">C18</a></li>
+  <li><a href="#hilic" id="toc-hilic" class="nav-link" data-scroll-target="#hilic">HILIC</a></li>
+  </ul></li>
+  <li><a href="#binding-formatted-metabolite-assay-tables-into-one-metabolite-table" id="toc-binding-formatted-metabolite-assay-tables-into-one-metabolite-table" class="nav-link" data-scroll-target="#binding-formatted-metabolite-assay-tables-into-one-metabolite-table">Binding formatted metabolite assay tables into one metabolite table</a></li>
+  <li><a href="#output-files" id="toc-output-files" class="nav-link" data-scroll-target="#output-files">Output files</a>
+  <ul class="collapse">
+  <li><a href="#metabolite-table" id="toc-metabolite-table" class="nav-link" data-scroll-target="#metabolite-table">Metabolite table</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#output-file-2-mapping-file" id="toc-output-file-2-mapping-file" class="nav-link" data-scroll-target="#output-file-2-mapping-file">Output File 2: Mapping file</a>
+  <ul class="collapse">
+  <li><a href="#formatting" id="toc-formatting" class="nav-link" data-scroll-target="#formatting">Formatting</a>
+  <ul class="collapse">
+  <li><a href="#amide-1" id="toc-amide-1" class="nav-link" data-scroll-target="#amide-1">Amide</a></li>
+  <li><a href="#c8-1" id="toc-c8-1" class="nav-link" data-scroll-target="#c8-1">C8</a></li>
+  <li><a href="#c18-1" id="toc-c18-1" class="nav-link" data-scroll-target="#c18-1">C18</a></li>
+  <li><a href="#hilic-1" id="toc-hilic-1" class="nav-link" data-scroll-target="#hilic-1">HILIC</a></li>
+  </ul></li>
+  <li><a href="#binding-formatted-mapping-files-into-one-mapping-file" id="toc-binding-formatted-mapping-files-into-one-mapping-file" class="nav-link" data-scroll-target="#binding-formatted-mapping-files-into-one-mapping-file">Binding formatted mapping files into one mapping file</a></li>
+  <li><a href="#output-files-1" id="toc-output-files-1" class="nav-link" data-scroll-target="#output-files-1">Output files</a>
+  <ul class="collapse">
+  <li><a href="#mapping-file" id="toc-mapping-file" class="nav-link" data-scroll-target="#mapping-file">Mapping file</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#notes" id="toc-notes" class="nav-link" data-scroll-target="#notes">Notes</a>
+  <ul class="collapse">
+  <li><a href="#footnotes" id="toc-footnotes" class="nav-link" data-scroll-target="#footnotes">Footnotes</a></li>
+  <li><a href="#session-info" id="toc-session-info" class="nav-link" data-scroll-target="#session-info">Session info</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</div>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Make-MESA-TOPMed-multi-omics</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>LekkiWood (LekkiWood@Gmail.com) </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">October 16, 2025</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="unresolved-concerns" class="level1">
+<h1>1. Unresolved concerns</h1>
+<ul>
+<li><p>The C18 assay has a smaller N than some others</p></li>
+<li><p>Duplicated SHARe IDs (sidno) / exam combinations (advice from DCC / lab = exclude all).</p></li>
+<li><p>Some SHARe IDs are still missing from the bridging file</p></li>
+</ul>
+</section>
+<section id="output-file-1-formated-metabolite-assay-tables" class="level1">
+<h1>2. Output File 1: Formated Metabolite Assay Tables</h1>
+<section id="input-filenames" class="level2">
+<h2 class="anchored" data-anchor-id="input-filenames">Input filenames</h2>
+<section id="raw-metabolite-tables" class="level3">
+<h3 class="anchored" data-anchor-id="raw-metabolite-tables">Raw metabolite tables</h3>
+<ul>
+<li>A table of metabolite abundances from the amide assay: 25_0107_TOPMed_MESA_Amide-neg_rev031325.csv</li>
+</ul>
+<!-- -->
+<ul>
+<li><p>A table of metabolite abundances from the C8-pos assay: 24_1210_TOPMed_MESA_C8-pos_checksums_rev031325.csv</p></li>
+<li><p>A table of metabolite abundances from the C18-neg assay: 24_1210_TOPMed_MESA_C18-neg_checksums_rev031325.csv</p></li>
+<li><p>A table of metabolite abundances from the HILIC assay: 24_1210_TOPMed_MESA_HILIC-pos_checksums_rev031325.csv</p></li>
+</ul>
+</section>
+<section id="sample-info-files" class="level3">
+<h3 class="anchored" data-anchor-id="sample-info-files">Sample info files</h3>
+<ul>
+<li><p>Sample information for the amide assay: MesaMetabolomics_PilotX01_AmideNeg_SampleInfo_20250329.txt</p></li>
+<li><p>Sample information for the C8-pos assay: MesaMetabolomics_PilotX01_C8Pos_SampleInfo_20250329.txt</p></li>
+<li><p>Sample information for the C18-neg assay: MesaMetabolomics_PilotX01_C18Neg_SampleInfo_20250329.txt</p></li>
+<li><p>Sample information for the HILIC assay: MesaMetabolomics_PilotX01_HILIC-Pos_SampleInfo_20250329.txt</p></li>
+</ul>
+</section>
+<section id="bridging-file" class="level3">
+<h3 class="anchored" data-anchor-id="bridging-file">Bridging file</h3>
+<ul>
+<li>A file to bridge SHARe ids (sidno) with MESA IDs (idno) MESA-SHARE_IDList_Labeled.csv</li>
+</ul>
+<p>And creates the following:</p>
+</section>
+</section>
+<section id="formatting-metabolite-tables" class="level2">
+<h2 class="anchored" data-anchor-id="formatting-metabolite-tables">Formatting metabolite tables</h2>
+<section id="amide" class="level3">
+<h3 class="anchored" data-anchor-id="amide">Amide</h3>
+<ul>
+<li><p>The amide sample info file contained information on N=13727 TOMIDs (each corresponding to one participant’s abundances at one exam).</p></li>
+<li><p>Metabolites were renamed according to the following rules:</p>
+<ul>
+<li><p>For known compounds:</p>
+<ul>
+<li>The compound name (supplied by the lab) was transformed using the “make.names” command with unique=TRUE, and prefixed with the string “Amide_”.</li>
+</ul></li>
+<li><p>The amide assay only has known compounds.</p></li>
+</ul></li>
+<li><p>When the TOMIDs in the sample info file were extracted from the original metabolite table, there were N=NULL TOMIDs remaining.<sup>1</sup></p></li>
+<li><p>We searched for duplicated TOMIDs, and N= were found.<sup>1</sup></p></li>
+<li><p>One value for TOM148122 had an incorrect rounding problem (1+2559:2584.03935869994933). This was recoded to missing.</p></li>
+<li><p>The the table was transposed. The following duplicates were identified:</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th style="text-align: right;" data-quarto-table-cell-role="th">sidno</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">exam</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">n</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">10509</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">14687</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">25200</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">2</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+<p>The duplicates were removed leaving a final table of N= 155 metabolites across 13721 observations.</p></li>
+</ul>
+</section>
+<section id="c8" class="level3">
+<h3 class="anchored" data-anchor-id="c8">C8</h3>
+<ul>
+<li><p>The C8 sample info file contained information on N=13722 TOMIDs (each corresponding to one participant’s abundances at one exam).</p></li>
+<li><p>Metabolites were renamed according to the following rules:</p>
+<ul>
+<li><p>For known compounds:</p>
+<ul>
+<li>The compound name (supplied by the lab) was transformed using the “make.names” command with unique=TRUE, and prefixed with the string “C8_”.</li>
+</ul></li>
+<li><p>For unknown compounds:</p>
+<ul>
+<li>The lab ID (arbitrarily assigned by The Broad) assigned within the X01 study (variable: Compound_ID_X01; arbitrarily chosen from the MESA2 and MESA PILOT names by Lekki) was prefixed with the string “C8_”.</li>
+</ul></li>
+</ul></li>
+<li><p>When the TOMIDs in the sample info file were extracted from the original metabolite table, there were N=NULL TOMIDs remaining.<sup>1</sup></p></li>
+<li><p>We searched for duplicated TOMIDs, and N= were found.<sup>1</sup></p></li>
+<li><p>The the table was transposed. The following duplicates were identified:</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th style="text-align: right;" data-quarto-table-cell-role="th">sidno</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">exam</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">n</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">10509</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">14687</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">25200</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">2</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div></li>
+<li><p>The duplicates were removed leaving a final table of N=869 metabolites across N=13716 observations.</p></li>
+</ul>
+</section>
+<section id="c18" class="level3">
+<h3 class="anchored" data-anchor-id="c18">C18</h3>
+<ul>
+<li><p>The C18 sample info file contained information on N=13684 TOMIDs (each corresponding to one participant’s abundances at one exam).</p></li>
+<li><p>Metabolites were renamed according to the following rules:</p>
+<ul>
+<li><p>For known compounds:</p>
+<ul>
+<li>The compound name (supplied by the lab) was transformed using the “make.names” command with unique=TRUE, and prefixed with the string “C18_”.</li>
+</ul></li>
+<li><p>For unknown compounds:</p>
+<ul>
+<li>The lab ID (arbitrarily assigned by The Broad) assigned within the X01 study (variable: Compound_ID_X01; arbitrarily chosen from the MESA2 and MESA PILOT names by Lekki) was prefixed with the string “C18_”.</li>
+</ul></li>
+</ul></li>
+<li><p>When the TOMIDs in the sample info file were extracted from the original metabolite table, there were N=NULL TOMIDs remaining.<sup>1</sup></p></li>
+<li><p>We searched for duplicated TOMIDs, and N= were found.<sup>1</sup></p></li>
+<li><p>The the table was transposed. The following duplicates were identified:</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th style="text-align: right;" data-quarto-table-cell-role="th">sidno</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">exam</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">n</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">10509</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">14687</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">2</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div></li>
+<li><p>The duplicates were removed leaving a final table of N=2655 metabolites across N=13680 observations.</p></li>
+</ul>
+</section>
+<section id="hilic" class="level3">
+<h3 class="anchored" data-anchor-id="hilic">HILIC</h3>
+<ul>
+<li><p>The HILIC sample info file contained information on N=13726 TOMIDs (each corresponding to one participant’s abundances at one exam).</p></li>
+<li><p>Metabolites were renamed according to the following rules:</p>
+<ul>
+<li><p>For known compounds:</p>
+<ul>
+<li>The compound name (supplied by the lab) was transformed using the “make.names” command with unique=TRUE, and prefixed with the string “HILIC_”.</li>
+</ul></li>
+<li><p>For unknown compounds:</p>
+<ul>
+<li>The lab ID (arbitrarily assigned by The Broad) assigned within the X01 study (variable: Compound_ID_X01; arbitrarily chosen from the MESA2 and MESA PILOT names by Lekki) was prefixed with the string “HILIC_”.</li>
+</ul></li>
+</ul></li>
+<li><p>When the TOMIDs in the sample info file were extracted from the original metabolite table, there were N=NULL TOMIDs remaining.<sup>1</sup></p></li>
+<li><p>We searched for duplicated TOMIDs, and N= were found.<sup>1</sup></p></li>
+<li><p>The the table was transposed. The following duplicates were identified:</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th style="text-align: right;" data-quarto-table-cell-role="th">sidno</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">exam</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">n</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">10509</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">14687</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">25200</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">2</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div></li>
+<li><p>The duplicates were removed leaving a final table of N=906 metabolites across N=13720 observations.</p></li>
+</ul>
+</section>
+</section>
+<section id="binding-formatted-metabolite-assay-tables-into-one-metabolite-table" class="level2">
+<h2 class="anchored" data-anchor-id="binding-formatted-metabolite-assay-tables-into-one-metabolite-table">Binding formatted metabolite assay tables into one metabolite table</h2>
+<ul>
+<li><p>The data from the 4 assays were merged, yielding information on N= 4585 compounds, across N= 13726 observations.</p></li>
+<li><p>Those observations represented N=6431 unique individuals, with data on N=6375 individuals at exam 1, N=4341 at exam 5, and N=3010 at exam 6.</p></li>
+<li><p>MESA SHARe IDs were merged in to the final metabolite table using the bridging file above. The following SHARe IDs were missing from the bridging table: 10185, 10185, 26389, 26389, 26389 .</p></li>
+<li><p>The final metabolite table for analysis is in long form, and has 13726 observations on 4590 variables (5 variables are not metabolites: sidno, subject_id, TOM_ID, exam, idno).</p></li>
+</ul>
+</section>
+<section id="output-files" class="level2">
+<h2 class="anchored" data-anchor-id="output-files">Output files</h2>
+<section id="metabolite-table" class="level3">
+<h3 class="anchored" data-anchor-id="metabolite-table">Metabolite table</h3>
+<p>The metabolite table was saved in long form with the file name MESA_TOPMed_Metabolite_Longform_2025-10-16.csv<sup>2</sup></p>
+</section>
+</section>
+</section>
+<section id="output-file-2-mapping-file" class="level1">
+<h1>Output File 2: Mapping file</h1>
+<section id="formatting" class="level2">
+<h2 class="anchored" data-anchor-id="formatting">Formatting</h2>
+<section id="amide-1" class="level3">
+<h3 class="anchored" data-anchor-id="amide-1">Amide</h3>
+<ul>
+<li><p>Variables were renamed as follows:</p>
+<ul>
+<li><p>“Presence MESA X01” renamed to: “Included_X01” (coded 1=yes, 0 = no)</p></li>
+<li><p>“Presence MESA PILOT” renamed to: “Included_Pilot” (coded 1=yes, 0 = no)</p></li>
+<li><p>“Presence MESA MESA2” renamed to: “Included_MESA2” (coded 1=yes, 0 = no)</p></li>
+<li><p>“DB_ID” renamed to “HMDB_ID”.</p></li>
+</ul></li>
+<li><p>The original metabolite name (where known) from the lab was preserved as the variable ‘Original_Metabolite_Name’.</p></li>
+<li><p>Metabolites were renamed according to the following rules:</p>
+<ul>
+<li><p>For known compounds:</p>
+<ul>
+<li>The compound name (supplied by the lab) was transformed using the “make.names” command with unique=TRUE, and prefixed with the string “Amide_”.</li>
+</ul></li>
+</ul></li>
+<li><p>A variable “Known_Compound” was created to indicate whether the compound had been assigned a name as of Thursday, October, 16, 2025<sup>2</sup> (coding 1= yes, 0=no) [amide is currently all known compounds).</p>
+<ul>
+<li>The amide assay has N= 155 known compounds and no unknown compounds.</li>
+</ul></li>
+<li><p>A variable “Compound_ID_X01” was created allow this to map on to other assays which have unknown compounds included.</p></li>
+</ul>
+</section>
+<section id="c8-1" class="level3">
+<h3 class="anchored" data-anchor-id="c8-1">C8</h3>
+<ul>
+<li><p>The following variables were created:</p>
+<ul>
+<li><p>“Presence MESA X01” (coded 1)</p></li>
+<li><p>“Presence MESA PILOT” (coded 1)</p></li>
+<li><p>“Presence MESA MESA2” (coded 1).</p></li>
+</ul></li>
+<li><p>The original metabolite name (where known) from the lab was preserved as the variable ‘Original_Metabolite_Name’</p></li>
+<li><p>Metabolites were renamed according to the following rules:</p>
+<ul>
+<li><p>For known compounds:</p>
+<ul>
+<li>The compound name (supplied by the lab) was transformed using the “make.names” command with unique=TRUE, and prefixed with the string “C8_”.</li>
+</ul></li>
+<li><p>For unknown compounds:</p>
+<ul>
+<li>The lab ID (arbitrarily assigned by The Broad) assigned within the X01 study (variable: Compound_ID_X01; arbitrarily chosen from the MESA2 and MESA PILOT names by Lekki) was prefixed with the string “C8_”.</li>
+</ul></li>
+</ul></li>
+<li><p>A variable “Known_Compound” was created to indicate whether the compound had been assigned a name as of Thursday, October, 16, 2025<sup>2</sup> (coding 1= yes, 0=no).</p>
+<ul>
+<li>The C8 assay has N= 348 known compounds and 521 unknown compounds.</li>
+</ul></li>
+</ul>
+</section>
+<section id="c18-1" class="level3">
+<h3 class="anchored" data-anchor-id="c18-1">C18</h3>
+<ul>
+<li><p>The following variables were created:</p>
+<ul>
+<li><p>“Presence MESA X01” (coded 1)</p></li>
+<li><p>“Presence MESA PILOT” (coded 1)</p></li>
+<li><p>“Presence MESA MESA2” (coded 1).</p></li>
+</ul></li>
+<li><p>The original metabolite name (where known) from the lab was preserved as the variable ‘Original_Metabolite_Name’</p></li>
+<li><p>Metabolites were renamed according to the following rules:</p>
+<ul>
+<li><p>For known compounds:</p>
+<ul>
+<li>The compound name (supplied by the lab) was transformed using the “make.names” command with unique=TRUE, and prefixed with the string “C18_”.</li>
+</ul></li>
+<li><p>For unknown compounds:</p>
+<ul>
+<li>The lab ID (arbitrarily assigned by The Broad) assigned within the X01 study (variable: Compound_ID_X01; arbitrarily chosen from the MESA2 and MESA PILOT names by Lekki) was prefixed with the string “C18_”.</li>
+</ul></li>
+</ul></li>
+<li><p>A variable “Known_Compound” was created to indicate whether the compound had been assigned a name as of Thursday, October, 16, 2025<sup>2</sup> (coding 1= yes, 0=no).</p>
+<ul>
+<li>The C18 assay has N= 130 known compounds and 2525 unknown compounds.</li>
+</ul></li>
+</ul>
+</section>
+<section id="hilic-1" class="level3">
+<h3 class="anchored" data-anchor-id="hilic-1">HILIC</h3>
+<ul>
+<li><p>The following variables were created:</p>
+<ul>
+<li><p>“Presence MESA X01” (coded 1)</p></li>
+<li><p>“Presence MESA PILOT” (coded 1)</p></li>
+<li><p>“Presence MESA MESA2” (coded 1).</p></li>
+</ul></li>
+<li><p>The original metabolite name (where known) from the lab was preserved as the variable ‘Original_Metabolite_Name’</p></li>
+<li><p>Metabolites were renamed according to the following rules:</p>
+<ul>
+<li><p>For known compounds:</p>
+<ul>
+<li>The compound name (supplied by the lab) was transformed using the “make.names” command with unique=TRUE, and prefixed with the string “HILIC_”.</li>
+</ul></li>
+<li><p>For unknown compounds:</p>
+<ul>
+<li>The lab ID (arbitrarily assigned by The Broad) assigned within the X01 study (variable: Compound_ID_X01; arbitrarily chosen from the MESA2 and MESA PILOT names by Lekki) was prefixed with the string “HILIC_”.</li>
+</ul></li>
+</ul></li>
+<li><p>A variable “Known_Compound” was created to indicate whether the compound had been assigned a name as of Thursday, October, 16, 2025<sup>2</sup> (coding 1= yes, 0=no).</p>
+<ul>
+<li>The HILIC assay has N= 302 known compounds and 604 unknown compounds.</li>
+</ul></li>
+</ul>
+</section>
+</section>
+<section id="binding-formatted-mapping-files-into-one-mapping-file" class="level2">
+<h2 class="anchored" data-anchor-id="binding-formatted-mapping-files-into-one-mapping-file">Binding formatted mapping files into one mapping file</h2>
+<ul>
+<li><p>The mapping information from the 4 assays were row bound.</p></li>
+<li><p>The final mapping file has information on 935 known compounds and 3650 unknown compounds</p></li>
+</ul>
+</section>
+<section id="output-files-1" class="level2">
+<h2 class="anchored" data-anchor-id="output-files-1">Output files</h2>
+<section id="mapping-file" class="level3">
+<h3 class="anchored" data-anchor-id="mapping-file">Mapping file</h3>
+<p>The metabolite table was saved in long form with the file name MESA_TOPMed_Metabolite_Mappingfile_2025-10-16.csv<sup>2</sup></p>
+</section>
+</section>
+</section>
+<section id="notes" class="level1">
+<h1>Notes</h1>
+<section id="footnotes" class="level2">
+<h2 class="anchored" data-anchor-id="footnotes">Footnotes</h2>
+<p><sup>1</sup>Missing, or “NULL” values here arise from using a standard script for all QC to flag potential issues. Missing, or “NULL” values typically indicate a lack of potentially concerning issue.</p>
+<p><sup>2</sup>Dates are dynamic</p>
+</section>
+<section id="session-info" class="level2">
+<h2 class="anchored" data-anchor-id="session-info">Session info</h2>
+<p>The exact session information used for this analysis</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>─ Session info ───────────────────────────────────────────────────────────────
+ setting  value
+ version  R version 4.5.1 (2025-06-13)
+ os       Linux Mint 21
+ system   x86_64, linux-gnu
+ ui       X11
+ language (EN)
+ collate  en_US.UTF-8
+ ctype    en_US.UTF-8
+ tz       America/Chicago
+ date     2025-10-16
+ pandoc   3.2 @ /usr/lib/rstudio-server/bin/quarto/bin/tools/x86_64/ (via rmarkdown)
+ quarto   1.5.57 @ /usr/lib/rstudio-server/bin/quarto/bin/quarto
+
+─ Packages ───────────────────────────────────────────────────────────────────
+ package     * version date (UTC) lib source
+ backports     1.5.0   2024-05-23 [1] CRAN (R 4.5.0)
+ base64url     1.4     2018-05-14 [1] CRAN (R 4.5.1)
+ callr         3.7.6   2024-03-25 [1] CRAN (R 4.5.1)
+ cli           3.6.5   2025-04-23 [1] CRAN (R 4.5.1)
+ codetools     0.2-20  2024-03-31 [4] CRAN (R 4.5.0)
+ data.table    1.17.8  2025-07-10 [1] CRAN (R 4.5.1)
+ digest        0.6.37  2024-08-19 [1] CRAN (R 4.5.0)
+ evaluate      1.0.5   2025-08-27 [1] CRAN (R 4.5.1)
+ fastmap       1.2.0   2024-05-15 [1] CRAN (R 4.5.0)
+ glue          1.8.0   2024-09-30 [1] CRAN (R 4.5.0)
+ htmltools     0.5.8.1 2024-04-04 [1] CRAN (R 4.5.0)
+ htmlwidgets   1.6.4   2023-12-06 [1] CRAN (R 4.5.0)
+ igraph        2.1.4   2025-01-23 [1] CRAN (R 4.5.0)
+ jsonlite      2.0.0   2025-03-27 [1] CRAN (R 4.5.0)
+ knitr         1.50    2025-03-16 [1] CRAN (R 4.5.0)
+ lifecycle     1.0.4   2023-11-07 [1] CRAN (R 4.5.0)
+ magrittr      2.0.4   2025-09-12 [1] CRAN (R 4.5.1)
+ pillar        1.11.1  2025-09-17 [1] CRAN (R 4.5.1)
+ pkgconfig     2.0.3   2019-09-22 [1] CRAN (R 4.5.0)
+ prettyunits   1.2.0   2023-09-24 [1] CRAN (R 4.5.0)
+ processx      3.8.6   2025-02-21 [2] CRAN (R 4.5.1)
+ ps            1.9.1   2025-04-12 [1] CRAN (R 4.5.0)
+ R6            2.6.1   2025-02-15 [1] CRAN (R 4.5.0)
+ rlang         1.1.6   2025-04-11 [1] CRAN (R 4.5.0)
+ rmarkdown     2.29    2024-11-04 [1] CRAN (R 4.5.0)
+ rstudioapi    0.17.1  2024-10-22 [1] CRAN (R 4.5.0)
+ secretbase    1.0.5   2025-03-04 [1] CRAN (R 4.5.1)
+ sessioninfo   1.2.3   2025-02-05 [1] CRAN (R 4.5.1)
+ targets       1.11.4  2025-09-13 [1] CRAN (R 4.5.1)
+ tibble        3.3.0   2025-06-08 [1] CRAN (R 4.5.1)
+ tidyselect    1.2.1   2024-03-11 [1] CRAN (R 4.5.0)
+ vctrs         0.6.5   2023-12-01 [1] CRAN (R 4.5.0)
+ withr         3.0.2   2024-10-28 [1] CRAN (R 4.5.0)
+ xfun          0.53    2025-08-19 [1] CRAN (R 4.5.1)
+ yaml          2.3.10  2024-07-26 [1] CRAN (R 4.5.0)
+
+ [1] /home/awood/R/x86_64-pc-linux-gnu-library/4.5
+ [2] /usr/local/lib/R/site-library
+ [3] /usr/lib/R/site-library
+ [4] /usr/lib/R/library
+
+──────────────────────────────────────────────────────────────────────────────</code></pre>
+</div>
+</div>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
