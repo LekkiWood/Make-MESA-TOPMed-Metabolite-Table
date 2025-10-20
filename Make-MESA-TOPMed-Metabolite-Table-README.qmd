@@ -45,7 +45,7 @@ if (!requireNamespace("quarto", quietly = TRUE)) {
 
 ## Last Update
 
--   This file was last updated on (`{r} format(Sys.Date(), "%A, %B, %d, %Y")`
+-   This file was last updated on `{r} format(Sys.Date(), "%A, %B, %d, %Y")`
 
 ## Summary
 
