@@ -6,6 +6,9 @@ format:
   html:
     toc: true
     toc-depth: 3
+crossref:
+  tbl-prefix: "Table"
+  fig-prefix: "Figure"
 execute:
   echo: false
   warning: false
@@ -29,6 +32,11 @@ if (!requireNamespace("knitr", quietly = TRUE)) {
   stop("The {knitr} package is not installed/available in this render session.")
 }
 
+## Load knitr
+if (!requireNamespace("quarto", quietly = TRUE)) {
+  stop("The {knitr} package is not installed/available in this render session.")
+}
+
 ```
 
 # 1. Unresolved concerns
@@ -40,21 +48,71 @@ QC_info <- targets::tar_read(build_metabs_QC)
 Metabfile_out_name <- targets::tar_read(long_metabtable_filename)
 ```
 
+## Assay questions
+
 -   The C18 assay has a smaller N than some others
+
+## MESA DCC questions
 
 -   Duplicated SHARe IDs (sidno) / exam combinations (advice from DCC / lab = exclude all).
 
 -   Some SHARe IDs are still missing from the bridging file
 
-# 2. Output File 1: Formated Metabolite Assay Tables
+## Metabolite names
+
+### Unresolved
+
+-   LPC 16:0/0:0 is measured twice on the C8 assay, with the same HMDB, but different assigned LAB IDs. For now, the compound with the Compound ID in the X01 of "TF04" is renamed as LPC 16:0/0:0_v2.
+
+-   Some lipids have the same HMDB ID, but the names are not listed as synonyms e.g., Cer 40:1;O2 (C8 assay) is not listed as a synonym for 18:1, and Cer 42:2;O2_A is not listed for a synonym for Cer 18:1;O2/24:1
+
+    |         |             |                  |       |
+    |---------|-------------|------------------|-------|
+    | Lab ID  | HMDB        | Metabolite       | Assay |
+    | QI04610 | HMDB0004952 | Cer 18:1;O2/22:0 | hilic |
+    | QI8023  | HMDB0004952 | Cer 40:1;O2      | c8    |
+
+    |         |             |                  |       |
+    |---------|-------------|------------------|-------|
+    | Lab ID  | HMDB        | Metabolite       | Assay |
+    | QI04540 | HMDB0004953 | Cer 18:1;O2/24:1 | hilic |
+    | QI4265  | HMDB0004953 | Cer 42:2;O2_A    | c8    |
+
+### Probably resolved, but check with Clary
+
+-   Glutamic acid had different HMDBs on the original HILIC and amide assays. Per advice: The HMDB from the HILIC was retained for both assays.
+
+|               |             |               |       |
+|---------------|-------------|---------------|-------|
+| Lab ID        | HMDB        | Metabolite    | Assay |
+| QI18171       | HMDB0000148 | Glutamic acid | hilic |
+| Glutamic.acid | HMDB0003339 | Glutamic acid | amide |
+
+-   For the amide assay, the compound with HMDB ID "HMDB0000122" had a different name to that used for the HILIC and C18 assays (but both names "correct" - using different conventions). They were treated as the same compounds.
+
++---------------------+-------------+---------------------+-------+
+| Lab ID              | HMDB        | Metabolite          | Assay |
++---------------------+-------------+---------------------+-------+
+| Glucose.Fructose.   | HMDB0000122 | Glucose/Fructose/   | amide |
+|                     |             |                     |       |
+| Galactose_waterloss |             | Galactose_waterloss |       |
++---------------------+-------------+---------------------+-------+
+| QI3656              | HMDB0000122 | Hexose              | c18   |
++---------------------+-------------+---------------------+-------+
+| QI14125             | HMDB0000122 | Hexose              | hilic |
++---------------------+-------------+---------------------+-------+
+
+## For Lekki
+
+-   Table hyperlinks are still not rendering in Quarto and no one can fix it.
+
+# 2. File 1: Formatted Metabolite Assay Tables
 
 ## Input filenames
 
 ### Raw metabolite tables
 
 -   A table of metabolite abundances from the amide assay: `{r} print(unlist(strsplit(QC_info$filenames$raw_amide_file_name, split="/"))[7])`
-
-<!-- -->
 
 -   A table of metabolite abundances from the C8-pos assay: `{r} print(unlist(strsplit(QC_info$filenames$raw_C8_file_name, split="/"))[7])`
 
@@ -76,8 +134,6 @@ Metabfile_out_name <- targets::tar_read(long_metabtable_filename)
 
 -   A file to bridge SHARe ids (sidno) with MESA IDs (idno) `{r} print(unlist(strsplit(QC_info$filenames$raw_bridgingfile_file_name, split="/"))[7])`
 
-And creates the following:
-
 ## Formatting metabolite tables
 
 ### Amide
@@ -98,19 +154,21 @@ And creates the following:
 
 -   One value for TOM148122 had an incorrect rounding problem (1+2559:2584.03935869994933). This was recoded to missing.
 
--   The the table was transposed. The following duplicates were identified:
+-   The table was transposed. The following duplicates were identified:
+
+-   
 
     ```{r}
 
-    #| label: tbl-Amide-dupes
+    #| label: tbl-amide-dupes
+    #| type: table
     #| tbl-cap: "Duplicate metabolite abundances in metabolites from amide assay, supplied by MESA DCC"
-    #| tbl-colwidths: [50, 50] # Example: First column 30%, second 70%
 
-    knitr::kable(QC_info$duplicates_in_raw_tables$amide_dupes, format="html")
-
+    QC_info$duplicates_in_raw_tables$amide_dupes |>
+     knitr::kable(format = "html")
     ```
 
-    The duplicates were removed leaving a final table of N= `{r} QC_info$final_table_dims$final_table_dims_amide[2]-4` metabolites across `{r} QC_info$final_table_dims$final_table_dims_amide[1]` observations.
+    -   The duplicates were removed leaving a final table of N= `{r} QC_info$final_table_dims$final_table_dims_amide[2]-4` metabolites across `{r} QC_info$final_table_dims$final_table_dims_amide[1]` observations.
 
 ### C8
 
@@ -218,7 +276,7 @@ And creates the following:
 
 The metabolite table was saved in long form with the file name `{r} print(Metabfile_out_name)`^2^
 
-# Output File 2: Mapping file
+# File 2: Mapping file
 
 ```{r}
 
@@ -227,6 +285,18 @@ The metabolite table was saved in long form with the file name `{r} print(Metabf
 QC_info_mapping <- targets::tar_read(build_mapping_QC)
 mapping_filename <- targets::tar_read(mapping_filename)
 ```
+
+## Input filenames
+
+### Raw metabolite tables
+
+-   A table of metabolite abundances from the amide assay: `{r} print(unlist(strsplit(QC_info$filenames$raw_amide_file_name, split="/"))[7])`
+
+-   A table of metabolite abundances from the C8-pos assay: `{r} print(unlist(strsplit(QC_info$filenames$raw_C8_file_name, split="/"))[7])`
+
+-   A table of metabolite abundances from the C18-neg assay: `{r} print(unlist(strsplit(QC_info$filenames$raw_C18_file_name, split="/"))[7])`
+
+-   A table of metabolite abundances from the HILIC assay: `{r} print(unlist(strsplit(QC_info$filenames$raw_HILIC_file_name, split="/"))[7])`
 
 ## Formatting
 
@@ -345,6 +415,186 @@ mapping_filename <- targets::tar_read(mapping_filename)
 ### Mapping file
 
 The metabolite table was saved in long form with the file name `{r} print(mapping_filename)`^2^
+
+# File 3: QC file
+
+```{r}
+
+#| label: read-in-QC-info
+
+CV_table <- targets::tar_read(Metabolite_CV_and_missingness)
+qc_filename <- targets::tar_read(Metabolite_CV_and_missingness_filename)
+
+```
+
+## Input files
+
+### Raw metabolite tables
+
+-   A table of metabolite abundances from the amide assay: `{r} print(unlist(strsplit(QC_info$filenames$raw_amide_file_name, split="/"))[7])`
+
+-   A table of metabolite abundances from the C8-pos assay: `{r} print(unlist(strsplit(QC_info$filenames$raw_C8_file_name, split="/"))[7])`
+
+-   A table of metabolite abundances from the C18-neg assay: `{r} print(unlist(strsplit(QC_info$filenames$raw_C18_file_name, split="/"))[7])`
+
+-   A table of metabolite abundances from the HILIC assay: `{r} print(unlist(strsplit(QC_info$filenames$raw_HILIC_file_name, split="/"))[7])`
+
+### Sample info files
+
+-   Sample information for the amide assay: `{r} print(unlist(strsplit(QC_info$filenames$raw_amide_info_file_name, split="/"))[7])`
+
+-   Sample information for the C8-pos assay: `{r} print(unlist(strsplit(QC_info$filenames$raw_C8_info_file_name, split="/"))[7])`
+
+-   Sample information for the C18-neg assay: `{r} print(unlist(strsplit(QC_info$filenames$raw_C18_info_file_name, split="/"))[7])`
+
+-   Sample information for the HILIC assay: `{r} print(unlist(strsplit(QC_info$filenames$raw_HILIC_info_file_name, split="/"))[7])`
+
+## Formatting
+
+-   For each of the four metabolite tables above, the QC samples were selected by selecting Sample_Type=="QC-pooled_ref" from the sample info files.
+
+-   The number of QC samples used for calculating coefficients of variation (CVs) is included in the final mapping file.
+
+-   Metabolites were renamed according to the following rules:
+
+    -   For known compounds:
+
+        -   The compound name (supplied by the lab) was transformed using the "make.names" command with unique=TRUE, and prefixed with the string "\[assay name\]\_".
+
+    -   For unknown compounds:
+
+        -   The lab ID (arbitrarily assigned by The Broad) assigned within the X01 study (variable: Compound_ID_X01; arbitrarily chosen from the MESA2 and MESA PILOT names by Lekki) was prefixed with the string "\[assay name\]\_".
+
+-   A variable: "Known" was created to indicate identified compounds (coded 1) and unidentified compaoiunds (coded 0).
+
+## Coefficients of Variations
+
+### Calculation
+
+-   CVs were calculated across all exams (since batches were not startified by exam) as the mean of all QC samples, divided by the standard deviation of all QC samples, multiplied by 100, and saved as the variable "cv_percent".
+
+### Information
+
+-   Across, all assays, the mean CV was `{r} mean(CV_table$cv_percent, na.rm=TRUE)`, with a range of `{r} min(CV_table$cv_percent, na.rm=TRUE)` - `{r} max(CV_table$cv_percent, na.rm=TRUE)`.
+-   The CVs, per assay, are:
+
+```{r}
+
+#| label: cvs-by-assay
+#| type: table
+#| tbl-cap: "Coefficients of Variation by assay"
+
+CV_table |>
+  dplyr::group_by(Assay) |>
+  dplyr::summarise(Mean_CV = mean(cv_percent, na.rm=TRUE)) |>
+ knitr::kable(format = "html")
+
+  
+```
+
+-   The CVs per assay, stratified into known and unknown metabolites are:
+
+```{r}
+
+#| label: cvs-by-assay-by-known-status
+#| type: table
+#| tbl-cap: "Coefficients of Variation by assay and exam"
+
+CV_table |>
+  dplyr::group_by(Assay, Known) |>
+  dplyr::summarise(Mean_CV = mean(cv_percent, na.rm=TRUE)) |>
+  dplyr::mutate(Known = dplyr::case_when(Known==1 ~ "Known Metabolites",
+                                         Known==0 ~ "Unknown Compounds",
+                                         TRUE ~ NA_character_)) |>
+ knitr::kable(format = "html")
+
+
+```
+
+## Missingness
+
+### Calculation
+
+-   Missingness was calculated per exam, as people often conduct exam-specific analysis. The proportion of missingness for each assay, by exam is below (note, this is for people with assay data at each exam, missingness does not include, for example, people who have data at exam 1, but have no data at exam 5):
+
+```{r}
+
+#| label: missingness-by-assay-by-exam
+#| type: table
+#| tbl-cap: "Missingness by assay, and by exam"
+
+CV_table |>
+  dplyr::group_by(Assay) |>
+  dplyr::summarise(Overall = mean(missing_all_exams, na.rm=TRUE),
+                   E1 = mean(missing_exam_1, na.rm=TRUE),
+                   E5 = mean(missing_exam_5, na.rm=TRUE),
+                   E6 = mean(missing_exam_6, na.rm=TRUE)
+                   
+                   ) |>
+ knitr::kable(format = "html")
+
+```
+
+## Output file
+
+-   The file with CV and missing ness information was saved as `{r} print(qc_filename)`
+
+# File 4: Duplicate flags
+
+```{r}
+
+Duplicate_flag_file <- targets::tar_read(Duplicates_flag_file)
+Duplicate_flag_filename <- targets::tar_read(Duplicates_flag_file_filename)
+```
+
+## Formatting
+
+### Clearing up mistakes:
+
+-   Glutamic acid had different HMDBs on the original HILIC and amide assays. Per advice: for the amide assay, the metabolite Glutamic acid had the HMDB ID changed from HMDB0003339 -\> HMDB0000148.
+
+### Flagging duplicates
+
+-   After the file cleaning (see above), only the HMDB_ID variable was used to flag compounds measured on more than one assay. To flag these, a variable was created "Retain", with the following coding:
+
+    -   0, labelled "Unique or missing HMDB ID": an unknown compound, or a unique HMDB ID
+
+    -   1, labelled "Duplicated HMDB ID with lowest CV": A duplicated HMDB ID with the lowest coefficient of variation (CV) across all compounds sharing that HMDB ID
+
+    -   2, labelled "Internal standard": A compound used as an internal standard (generally excluded from standard analyses)
+
+    -   3, labelled "Duplicated HMDB_ID and not lowest CV": A duplicated HMDB ID that does *not* have the lowest coefficient of variation (CV) across all compounds sharing that HMDB ID (generally excluded from analyses where you do not want the same compound included more than once)
+
+    -   The variable Retain had the following frequencies:
+
+    ```{r}
+
+    #| label: duplicates-etc 
+    #| type: table 
+    #| tbl-cap: "Information on potential duplicates"
+
+    table(Duplicate_flag_file$Retain) |> 
+      knitr::kable(format="html")
+    ```
+
+## Output
+
+-   The final file flagging potential duplicates was saved as `{r} print(Duplicate_flag_filename)`.
+
+# File 5: Cleaned Metabolite File
+
+```{r}
+
+#| label: Load-final-file-info
+
+final_file_info <- targets::tar_read(Final_metabs_long_info)
+```
+
+## Formatting
+
+-   The duplicate flagging file was used to select from file 1 created above, all metabolites that had either a unique HMDB ID, or that had a duplicated HMDB ID but had the lowest CV from all those metabolites with the same HMDB ID.
+
+-   The final metabolite file contained information on N=`{r} print(final_file_info)[2] - 5` metabolites across N=`{r} final_file_info[1]` observations.
 
 # Notes
 

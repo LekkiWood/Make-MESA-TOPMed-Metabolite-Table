@@ -85,7 +85,92 @@ tar_target(mapping_file_csv,
              out_dir  <- "outputs"
              dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
              out_path <- file.path(out_dir, mapping_filename)
-             readr::write_csv(Metabs_long, out_path)
+             readr::write_csv(Mapping_file, out_path)
+             out_path
+           },
+           format = "file"
+),
+
+#
+
+#----------------------------------------------------------------------------#
+#--------------------------------3. CV and Missingness-----------------------#
+#----------------------------------------------------------------------------#
+
+
+tar_target(make_metabolite_QC, QC_metabolites_function(path_amide = path_amide, 
+                                                      path_C8 = path_C8, 
+                                                      path_C18 = path_C18, 
+                                                      path_HILIC = path_HILIC, 
+                                                      path_amide_info = path_amide_info, 
+                                                      path_C8_info = path_C8_info, 
+                                                      path_C18_info = path_C18_info, 
+                                                      path_HILIC_info = path_HILIC_info, 
+                                                      QC_label = "QC-pooled_ref", 
+                                                      Metabs_long = Metabs_long)),
+
+#save CV file for use
+tar_target(Metabolite_CV_and_missingness, make_metabolite_QC$QC_info),
+tar_target(Metabolite_CV_and_missingness_filename, paste0("MESA_TOPMed_Metabolite_QCfile_", Sys.Date(), ".csv")),
+
+
+#export CV as csv
+tar_target(Metabolite_CV_and_missingness_csv,
+           {
+             out_dir  <- "outputs"
+             dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
+             out_path <- file.path(out_dir, Metabolite_CV_and_missingness_filename)
+             readr::write_csv(Metabolite_CV_and_missingness, out_path)
+             out_path
+           },
+           format = "file"
+),
+
+#----------------------------------------------------------------------------#
+#--------------------------------4. Duplicates flag file---------------------#
+#----------------------------------------------------------------------------#
+
+tar_target(Duplicates_flag_file, flag_duplicates_function(QC_file = Metabolite_CV_and_missingness, 
+                                                          mapping_file = Mapping_file)),
+
+#Save
+#save duplicate flagging file for use
+tar_target(Duplicates_flag_file_filename, paste0("MESA_TOPMed_Metabolite_Duplicateflag_", Sys.Date(), ".csv")),
+
+
+#export CV as csv
+tar_target(Duplicates_flag_csv,
+           {
+             out_dir  <- "outputs"
+             dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
+             out_path <- file.path(out_dir, Duplicates_flag_file_filename)
+             readr::write_csv(Duplicates_flag_file, out_path)
+             out_path
+           },
+           format = "file"
+),
+           
+#----------------------------------------------------------------------------#
+#--------------------------------4. Make_final clean file---------------------#
+#----------------------------------------------------------------------------#
+
+tar_target(Final_metabs_long_outfile, make_final_metabs_final_function(duplicate_flagging_file = Duplicates_flag_file, 
+                                                               metabolite_file = Metabs_long)),
+tar_target(Final_metabs_long, Final_metabs_long_outfile$metabolite_file_nodupes),
+tar_target(Final_metabs_long_info, Final_metabs_long_outfile$metabolite_file_nodupes_dims),
+
+#Save
+#save duplicate flagging file for use
+tar_target(Final_metabs_long_filename, paste0("MESA_TOPMed_Metabolite_cleanfile_", Sys.Date(), ".csv")),
+
+
+#export CV as csv
+tar_target(Final_metabs_long_csv,
+           {
+             out_dir  <- "outputs"
+             dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
+             out_path <- file.path(out_dir, Final_metabs_long_filename)
+             readr::write_csv(Final_metabs_long, out_path)
              out_path
            },
            format = "file"

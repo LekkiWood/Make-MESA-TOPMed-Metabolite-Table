@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="LekkiWood (LekkiWood@Gmail.com)">
-<meta name="dcterms.date" content="2025-10-16">
+<meta name="dcterms.date" content="2025-10-19">
 
 <title>Make-MESA-TOPMed-multi-omics</title>
 <style>
@@ -47,8 +47,18 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#unresolved-concerns" id="toc-unresolved-concerns" class="nav-link active" data-scroll-target="#unresolved-concerns">1. Unresolved concerns</a></li>
-  <li><a href="#output-file-1-formated-metabolite-assay-tables" id="toc-output-file-1-formated-metabolite-assay-tables" class="nav-link" data-scroll-target="#output-file-1-formated-metabolite-assay-tables">2. Output File 1: Formated Metabolite Assay Tables</a>
+  <li><a href="#unresolved-concerns" id="toc-unresolved-concerns" class="nav-link active" data-scroll-target="#unresolved-concerns">1. Unresolved concerns</a>
+  <ul class="collapse">
+  <li><a href="#assay-questions" id="toc-assay-questions" class="nav-link" data-scroll-target="#assay-questions">Assay questions</a></li>
+  <li><a href="#mesa-dcc-questions" id="toc-mesa-dcc-questions" class="nav-link" data-scroll-target="#mesa-dcc-questions">MESA DCC questions</a></li>
+  <li><a href="#metabolite-names" id="toc-metabolite-names" class="nav-link" data-scroll-target="#metabolite-names">Metabolite names</a>
+  <ul class="collapse">
+  <li><a href="#unresolved" id="toc-unresolved" class="nav-link" data-scroll-target="#unresolved">Unresolved</a></li>
+  <li><a href="#probably-resolved-but-check-with-clary" id="toc-probably-resolved-but-check-with-clary" class="nav-link" data-scroll-target="#probably-resolved-but-check-with-clary">Probably resolved, but check with Clary</a></li>
+  </ul></li>
+  <li><a href="#for-lekki" id="toc-for-lekki" class="nav-link" data-scroll-target="#for-lekki">For Lekki</a></li>
+  </ul></li>
+  <li><a href="#file-1-formatted-metabolite-assay-tables" id="toc-file-1-formatted-metabolite-assay-tables" class="nav-link" data-scroll-target="#file-1-formatted-metabolite-assay-tables">2. File 1: Formatted Metabolite Assay Tables</a>
   <ul class="collapse">
   <li><a href="#input-filenames" id="toc-input-filenames" class="nav-link" data-scroll-target="#input-filenames">Input filenames</a>
   <ul class="collapse">
@@ -69,8 +79,12 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#metabolite-table" id="toc-metabolite-table" class="nav-link" data-scroll-target="#metabolite-table">Metabolite table</a></li>
   </ul></li>
   </ul></li>
-  <li><a href="#output-file-2-mapping-file" id="toc-output-file-2-mapping-file" class="nav-link" data-scroll-target="#output-file-2-mapping-file">Output File 2: Mapping file</a>
+  <li><a href="#file-2-mapping-file" id="toc-file-2-mapping-file" class="nav-link" data-scroll-target="#file-2-mapping-file">File 2: Mapping file</a>
   <ul class="collapse">
+  <li><a href="#input-filenames-1" id="toc-input-filenames-1" class="nav-link" data-scroll-target="#input-filenames-1">Input filenames</a>
+  <ul class="collapse">
+  <li><a href="#raw-metabolite-tables-1" id="toc-raw-metabolite-tables-1" class="nav-link" data-scroll-target="#raw-metabolite-tables-1">Raw metabolite tables</a></li>
+  </ul></li>
   <li><a href="#formatting" id="toc-formatting" class="nav-link" data-scroll-target="#formatting">Formatting</a>
   <ul class="collapse">
   <li><a href="#amide-1" id="toc-amide-1" class="nav-link" data-scroll-target="#amide-1">Amide</a></li>
@@ -83,6 +97,38 @@ ul.task-list li input[type="checkbox"] {
   <ul class="collapse">
   <li><a href="#mapping-file" id="toc-mapping-file" class="nav-link" data-scroll-target="#mapping-file">Mapping file</a></li>
   </ul></li>
+  </ul></li>
+  <li><a href="#file-3-qc-file" id="toc-file-3-qc-file" class="nav-link" data-scroll-target="#file-3-qc-file">File 3: QC file</a>
+  <ul class="collapse">
+  <li><a href="#input-files" id="toc-input-files" class="nav-link" data-scroll-target="#input-files">Input files</a>
+  <ul class="collapse">
+  <li><a href="#raw-metabolite-tables-2" id="toc-raw-metabolite-tables-2" class="nav-link" data-scroll-target="#raw-metabolite-tables-2">Raw metabolite tables</a></li>
+  <li><a href="#sample-info-files-1" id="toc-sample-info-files-1" class="nav-link" data-scroll-target="#sample-info-files-1">Sample info files</a></li>
+  </ul></li>
+  <li><a href="#formatting-1" id="toc-formatting-1" class="nav-link" data-scroll-target="#formatting-1">Formatting</a></li>
+  <li><a href="#coefficients-of-variations" id="toc-coefficients-of-variations" class="nav-link" data-scroll-target="#coefficients-of-variations">Coefficients of Variations</a>
+  <ul class="collapse">
+  <li><a href="#calculation" id="toc-calculation" class="nav-link" data-scroll-target="#calculation">Calculation</a></li>
+  <li><a href="#information" id="toc-information" class="nav-link" data-scroll-target="#information">Information</a></li>
+  </ul></li>
+  <li><a href="#missingness" id="toc-missingness" class="nav-link" data-scroll-target="#missingness">Missingness</a>
+  <ul class="collapse">
+  <li><a href="#calculation-1" id="toc-calculation-1" class="nav-link" data-scroll-target="#calculation-1">Calculation</a></li>
+  </ul></li>
+  <li><a href="#output-file" id="toc-output-file" class="nav-link" data-scroll-target="#output-file">Output file</a></li>
+  </ul></li>
+  <li><a href="#file-4-duplicate-flags" id="toc-file-4-duplicate-flags" class="nav-link" data-scroll-target="#file-4-duplicate-flags">File 4: Duplicate flags</a>
+  <ul class="collapse">
+  <li><a href="#formatting-2" id="toc-formatting-2" class="nav-link" data-scroll-target="#formatting-2">Formatting</a>
+  <ul class="collapse">
+  <li><a href="#clearing-up-mistakes" id="toc-clearing-up-mistakes" class="nav-link" data-scroll-target="#clearing-up-mistakes">Clearing up mistakes:</a></li>
+  <li><a href="#flagging-duplicates" id="toc-flagging-duplicates" class="nav-link" data-scroll-target="#flagging-duplicates">Flagging duplicates</a></li>
+  </ul></li>
+  <li><a href="#output" id="toc-output" class="nav-link" data-scroll-target="#output">Output</a></li>
+  </ul></li>
+  <li><a href="#file-5-cleaned-metabolite-file" id="toc-file-5-cleaned-metabolite-file" class="nav-link" data-scroll-target="#file-5-cleaned-metabolite-file">File 5: Cleaned Metabolite File</a>
+  <ul class="collapse">
+  <li><a href="#formatting-3" id="toc-formatting-3" class="nav-link" data-scroll-target="#formatting-3">Formatting</a></li>
   </ul></li>
   <li><a href="#notes" id="toc-notes" class="nav-link" data-scroll-target="#notes">Notes</a>
   <ul class="collapse">
@@ -113,7 +159,7 @@ ul.task-list li input[type="checkbox"] {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">October 16, 2025</p>
+      <p class="date">October 19, 2025</p>
     </div>
   </div>
   
@@ -127,23 +173,155 @@ ul.task-list li input[type="checkbox"] {
 
 <section id="unresolved-concerns" class="level1">
 <h1>1. Unresolved concerns</h1>
+<section id="assay-questions" class="level2">
+<h2 class="anchored" data-anchor-id="assay-questions">Assay questions</h2>
 <ul>
-<li><p>The C18 assay has a smaller N than some others</p></li>
+<li>The C18 assay has a smaller N than some others</li>
+</ul>
+</section>
+<section id="mesa-dcc-questions" class="level2">
+<h2 class="anchored" data-anchor-id="mesa-dcc-questions">MESA DCC questions</h2>
+<ul>
 <li><p>Duplicated SHARe IDs (sidno) / exam combinations (advice from DCC / lab = exclude all).</p></li>
 <li><p>Some SHARe IDs are still missing from the bridging file</p></li>
 </ul>
 </section>
-<section id="output-file-1-formated-metabolite-assay-tables" class="level1">
-<h1>2. Output File 1: Formated Metabolite Assay Tables</h1>
+<section id="metabolite-names" class="level2">
+<h2 class="anchored" data-anchor-id="metabolite-names">Metabolite names</h2>
+<section id="unresolved" class="level3">
+<h3 class="anchored" data-anchor-id="unresolved">Unresolved</h3>
+<ul>
+<li><p>LPC&nbsp;16:0/0:0 is measured twice on the C8 assay, with the same HMDB, but different assigned LAB IDs. For now, the compound with the Compound ID in the X01 of “TF04” is renamed as LPC&nbsp;16:0/0:0_v2.</p></li>
+<li><p>Some lipids have the same HMDB ID, but the names are not listed as synonyms e.g., Cer 40:1;O2 (C8 assay) is not listed as a synonym for 18:1, and Cer 42:2;O2_A is not listed for a synonym for Cer 18:1;O2/24:1</p>
+<table class="caption-top table">
+<tbody>
+<tr class="odd">
+<td>Lab ID</td>
+<td>HMDB</td>
+<td>Metabolite</td>
+<td>Assay</td>
+</tr>
+<tr class="even">
+<td>QI04610</td>
+<td>HMDB0004952</td>
+<td>Cer 18:1;O2/22:0</td>
+<td>hilic</td>
+</tr>
+<tr class="odd">
+<td>QI8023</td>
+<td>HMDB0004952</td>
+<td>Cer 40:1;O2</td>
+<td>c8</td>
+</tr>
+</tbody>
+</table>
+<table class="caption-top table">
+<tbody>
+<tr class="odd">
+<td>Lab ID</td>
+<td>HMDB</td>
+<td>Metabolite</td>
+<td>Assay</td>
+</tr>
+<tr class="even">
+<td>QI04540</td>
+<td>HMDB0004953</td>
+<td>Cer 18:1;O2/24:1</td>
+<td>hilic</td>
+</tr>
+<tr class="odd">
+<td>QI4265</td>
+<td>HMDB0004953</td>
+<td>Cer 42:2;O2_A</td>
+<td>c8</td>
+</tr>
+</tbody>
+</table></li>
+</ul>
+</section>
+<section id="probably-resolved-but-check-with-clary" class="level3">
+<h3 class="anchored" data-anchor-id="probably-resolved-but-check-with-clary">Probably resolved, but check with Clary</h3>
+<ul>
+<li>Glutamic acid had different HMDBs on the original HILIC and amide assays. Per advice: The HMDB from the HILIC was retained for both assays.</li>
+</ul>
+<table class="caption-top table">
+<tbody>
+<tr class="odd">
+<td>Lab ID</td>
+<td>HMDB</td>
+<td>Metabolite</td>
+<td>Assay</td>
+</tr>
+<tr class="even">
+<td>QI18171</td>
+<td>HMDB0000148</td>
+<td>Glutamic acid</td>
+<td>hilic</td>
+</tr>
+<tr class="odd">
+<td>Glutamic.acid</td>
+<td>HMDB0003339</td>
+<td>Glutamic acid</td>
+<td>amide</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>For the amide assay, the compound with HMDB ID “HMDB0000122” had a different name to that used for the HILIC and C18 assays (but both names “correct” - using different conventions). They were treated as the same compounds.</li>
+</ul>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 28%">
+<col style="width: 20%">
+<col style="width: 28%">
+<col style="width: 20%">
+</colgroup>
+<tbody>
+<tr class="odd">
+<td>Lab ID</td>
+<td>HMDB</td>
+<td>Metabolite</td>
+<td>Assay</td>
+</tr>
+<tr class="even">
+<td><p>Glucose.Fructose.</p>
+<p>Galactose_waterloss</p></td>
+<td>HMDB0000122</td>
+<td><p>Glucose/Fructose/</p>
+<p>Galactose_waterloss</p></td>
+<td>amide</td>
+</tr>
+<tr class="odd">
+<td>QI3656</td>
+<td>HMDB0000122</td>
+<td>Hexose</td>
+<td>c18</td>
+</tr>
+<tr class="even">
+<td>QI14125</td>
+<td>HMDB0000122</td>
+<td>Hexose</td>
+<td>hilic</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="for-lekki" class="level2">
+<h2 class="anchored" data-anchor-id="for-lekki">For Lekki</h2>
+<ul>
+<li>Table hyperlinks are still not rendering in Quarto and no one can fix it.</li>
+</ul>
+</section>
+</section>
+<section id="file-1-formatted-metabolite-assay-tables" class="level1">
+<h1>2. File 1: Formatted Metabolite Assay Tables</h1>
 <section id="input-filenames" class="level2">
 <h2 class="anchored" data-anchor-id="input-filenames">Input filenames</h2>
 <section id="raw-metabolite-tables" class="level3">
 <h3 class="anchored" data-anchor-id="raw-metabolite-tables">Raw metabolite tables</h3>
 <ul>
-<li>A table of metabolite abundances from the amide assay: 25_0107_TOPMed_MESA_Amide-neg_rev031325.csv</li>
-</ul>
-<!-- -->
-<ul>
+<li><p>A table of metabolite abundances from the amide assay: 25_0107_TOPMed_MESA_Amide-neg_rev031325.csv</p></li>
 <li><p>A table of metabolite abundances from the C8-pos assay: 24_1210_TOPMed_MESA_C8-pos_checksums_rev031325.csv</p></li>
 <li><p>A table of metabolite abundances from the C18-neg assay: 24_1210_TOPMed_MESA_C18-neg_checksums_rev031325.csv</p></li>
 <li><p>A table of metabolite abundances from the HILIC assay: 24_1210_TOPMed_MESA_HILIC-pos_checksums_rev031325.csv</p></li>
@@ -163,7 +341,6 @@ ul.task-list li input[type="checkbox"] {
 <ul>
 <li>A file to bridge SHARe ids (sidno) with MESA IDs (idno) MESA-SHARE_IDList_Labeled.csv</li>
 </ul>
-<p>And creates the following:</p>
 </section>
 </section>
 <section id="formatting-metabolite-tables" class="level2">
@@ -183,8 +360,8 @@ ul.task-list li input[type="checkbox"] {
 <li><p>When the TOMIDs in the sample info file were extracted from the original metabolite table, there were N=NULL TOMIDs remaining.<sup>1</sup></p></li>
 <li><p>We searched for duplicated TOMIDs, and N= were found.<sup>1</sup></p></li>
 <li><p>One value for TOM148122 had an incorrect rounding problem (1+2559:2584.03935869994933). This was recoded to missing.</p></li>
-<li><p>The the table was transposed. The following duplicates were identified:</p>
-<div class="cell">
+<li><p>The table was transposed. The following duplicates were identified:</p></li>
+<li><div class="cell">
 <div class="cell-output-display">
 <table class="caption-top table table-sm table-striped small" data-quarto-postprocess="true">
 <thead>
@@ -216,7 +393,9 @@ ul.task-list li input[type="checkbox"] {
 
 </div>
 </div>
-<p>The duplicates were removed leaving a final table of N= 155 metabolites across 13721 observations.</p></li>
+<ul>
+<li>The duplicates were removed leaving a final table of N= 155 metabolites across 13721 observations.</li>
+</ul></li>
 </ul>
 </section>
 <section id="c8" class="level3">
@@ -391,8 +570,20 @@ ul.task-list li input[type="checkbox"] {
 </section>
 </section>
 </section>
-<section id="output-file-2-mapping-file" class="level1">
-<h1>Output File 2: Mapping file</h1>
+<section id="file-2-mapping-file" class="level1">
+<h1>File 2: Mapping file</h1>
+<section id="input-filenames-1" class="level2">
+<h2 class="anchored" data-anchor-id="input-filenames-1">Input filenames</h2>
+<section id="raw-metabolite-tables-1" class="level3">
+<h3 class="anchored" data-anchor-id="raw-metabolite-tables-1">Raw metabolite tables</h3>
+<ul>
+<li><p>A table of metabolite abundances from the amide assay: 25_0107_TOPMed_MESA_Amide-neg_rev031325.csv</p></li>
+<li><p>A table of metabolite abundances from the C8-pos assay: 24_1210_TOPMed_MESA_C8-pos_checksums_rev031325.csv</p></li>
+<li><p>A table of metabolite abundances from the C18-neg assay: 24_1210_TOPMed_MESA_C18-neg_checksums_rev031325.csv</p></li>
+<li><p>A table of metabolite abundances from the HILIC assay: 24_1210_TOPMed_MESA_HILIC-pos_checksums_rev031325.csv</p></li>
+</ul>
+</section>
+</section>
 <section id="formatting" class="level2">
 <h2 class="anchored" data-anchor-id="formatting">Formatting</h2>
 <section id="amide-1" class="level3">
@@ -413,7 +604,7 @@ ul.task-list li input[type="checkbox"] {
 <li>The compound name (supplied by the lab) was transformed using the “make.names” command with unique=TRUE, and prefixed with the string “Amide_”.</li>
 </ul></li>
 </ul></li>
-<li><p>A variable “Known_Compound” was created to indicate whether the compound had been assigned a name as of Thursday, October, 16, 2025<sup>2</sup> (coding 1= yes, 0=no) [amide is currently all known compounds).</p>
+<li><p>A variable “Known_Compound” was created to indicate whether the compound had been assigned a name as of Sunday, October, 19, 2025<sup>2</sup> (coding 1= yes, 0=no) [amide is currently all known compounds).</p>
 <ul>
 <li>The amide assay has N= 155 known compounds and no unknown compounds.</li>
 </ul></li>
@@ -441,7 +632,7 @@ ul.task-list li input[type="checkbox"] {
 <li>The lab ID (arbitrarily assigned by The Broad) assigned within the X01 study (variable: Compound_ID_X01; arbitrarily chosen from the MESA2 and MESA PILOT names by Lekki) was prefixed with the string “C8_”.</li>
 </ul></li>
 </ul></li>
-<li><p>A variable “Known_Compound” was created to indicate whether the compound had been assigned a name as of Thursday, October, 16, 2025<sup>2</sup> (coding 1= yes, 0=no).</p>
+<li><p>A variable “Known_Compound” was created to indicate whether the compound had been assigned a name as of Sunday, October, 19, 2025<sup>2</sup> (coding 1= yes, 0=no).</p>
 <ul>
 <li>The C8 assay has N= 348 known compounds and 521 unknown compounds.</li>
 </ul></li>
@@ -468,7 +659,7 @@ ul.task-list li input[type="checkbox"] {
 <li>The lab ID (arbitrarily assigned by The Broad) assigned within the X01 study (variable: Compound_ID_X01; arbitrarily chosen from the MESA2 and MESA PILOT names by Lekki) was prefixed with the string “C18_”.</li>
 </ul></li>
 </ul></li>
-<li><p>A variable “Known_Compound” was created to indicate whether the compound had been assigned a name as of Thursday, October, 16, 2025<sup>2</sup> (coding 1= yes, 0=no).</p>
+<li><p>A variable “Known_Compound” was created to indicate whether the compound had been assigned a name as of Sunday, October, 19, 2025<sup>2</sup> (coding 1= yes, 0=no).</p>
 <ul>
 <li>The C18 assay has N= 130 known compounds and 2525 unknown compounds.</li>
 </ul></li>
@@ -495,7 +686,7 @@ ul.task-list li input[type="checkbox"] {
 <li>The lab ID (arbitrarily assigned by The Broad) assigned within the X01 study (variable: Compound_ID_X01; arbitrarily chosen from the MESA2 and MESA PILOT names by Lekki) was prefixed with the string “HILIC_”.</li>
 </ul></li>
 </ul></li>
-<li><p>A variable “Known_Compound” was created to indicate whether the compound had been assigned a name as of Thursday, October, 16, 2025<sup>2</sup> (coding 1= yes, 0=no).</p>
+<li><p>A variable “Known_Compound” was created to indicate whether the compound had been assigned a name as of Sunday, October, 19, 2025<sup>2</sup> (coding 1= yes, 0=no).</p>
 <ul>
 <li>The HILIC assay has N= 302 known compounds and 604 unknown compounds.</li>
 </ul></li>
@@ -515,6 +706,282 @@ ul.task-list li input[type="checkbox"] {
 <h3 class="anchored" data-anchor-id="mapping-file">Mapping file</h3>
 <p>The metabolite table was saved in long form with the file name MESA_TOPMed_Metabolite_Mappingfile_2025-10-16.csv<sup>2</sup></p>
 </section>
+</section>
+</section>
+<section id="file-3-qc-file" class="level1">
+<h1>File 3: QC file</h1>
+<section id="input-files" class="level2">
+<h2 class="anchored" data-anchor-id="input-files">Input files</h2>
+<section id="raw-metabolite-tables-2" class="level3">
+<h3 class="anchored" data-anchor-id="raw-metabolite-tables-2">Raw metabolite tables</h3>
+<ul>
+<li><p>A table of metabolite abundances from the amide assay: 25_0107_TOPMed_MESA_Amide-neg_rev031325.csv</p></li>
+<li><p>A table of metabolite abundances from the C8-pos assay: 24_1210_TOPMed_MESA_C8-pos_checksums_rev031325.csv</p></li>
+<li><p>A table of metabolite abundances from the C18-neg assay: 24_1210_TOPMed_MESA_C18-neg_checksums_rev031325.csv</p></li>
+<li><p>A table of metabolite abundances from the HILIC assay: 24_1210_TOPMed_MESA_HILIC-pos_checksums_rev031325.csv</p></li>
+</ul>
+</section>
+<section id="sample-info-files-1" class="level3">
+<h3 class="anchored" data-anchor-id="sample-info-files-1">Sample info files</h3>
+<ul>
+<li><p>Sample information for the amide assay: MesaMetabolomics_PilotX01_AmideNeg_SampleInfo_20250329.txt</p></li>
+<li><p>Sample information for the C8-pos assay: MesaMetabolomics_PilotX01_C8Pos_SampleInfo_20250329.txt</p></li>
+<li><p>Sample information for the C18-neg assay: MesaMetabolomics_PilotX01_C18Neg_SampleInfo_20250329.txt</p></li>
+<li><p>Sample information for the HILIC assay: MesaMetabolomics_PilotX01_HILIC-Pos_SampleInfo_20250329.txt</p></li>
+</ul>
+</section>
+</section>
+<section id="formatting-1" class="level2">
+<h2 class="anchored" data-anchor-id="formatting-1">Formatting</h2>
+<ul>
+<li><p>For each of the four metabolite tables above, the QC samples were selected by selecting Sample_Type==“QC-pooled_ref” from the sample info files.</p></li>
+<li><p>The number of QC samples used for calculating coefficients of variation (CVs) is included in the final mapping file.</p></li>
+<li><p>Metabolites were renamed according to the following rules:</p>
+<ul>
+<li><p>For known compounds:</p>
+<ul>
+<li>The compound name (supplied by the lab) was transformed using the “make.names” command with unique=TRUE, and prefixed with the string “[assay name]_”.</li>
+</ul></li>
+<li><p>For unknown compounds:</p>
+<ul>
+<li>The lab ID (arbitrarily assigned by The Broad) assigned within the X01 study (variable: Compound_ID_X01; arbitrarily chosen from the MESA2 and MESA PILOT names by Lekki) was prefixed with the string “[assay name]_”.</li>
+</ul></li>
+</ul></li>
+<li><p>A variable: “Known” was created to indicate identified compounds (coded 1) and unidentified compaoiunds (coded 0).</p></li>
+</ul>
+</section>
+<section id="coefficients-of-variations" class="level2">
+<h2 class="anchored" data-anchor-id="coefficients-of-variations">Coefficients of Variations</h2>
+<section id="calculation" class="level3">
+<h3 class="anchored" data-anchor-id="calculation">Calculation</h3>
+<ul>
+<li>CVs were calculated across all exams (since batches were not startified by exam) as the mean of all QC samples, divided by the standard deviation of all QC samples, multiplied by 100, and saved as the variable “cv_percent”.</li>
+</ul>
+</section>
+<section id="information" class="level3">
+<h3 class="anchored" data-anchor-id="information">Information</h3>
+<ul>
+<li>Across, all assays, the mean CV was 13.7398974, with a range of 1.4705788 - 666.0002291.</li>
+<li>The CVs, per assay, are:</li>
+</ul>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Assay</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Mean_CV</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Amide</td>
+<td style="text-align: right;">11.48314</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">C18</td>
+<td style="text-align: right;">14.49480</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">C8</td>
+<td style="text-align: right;">11.50480</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">HILIC</td>
+<td style="text-align: right;">14.04263</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+<ul>
+<li>The CVs per assay, stratified into known and unknown metabolites are:</li>
+</ul>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Assay</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Known</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Mean_CV</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Amide</td>
+<td style="text-align: left;">Known Metabolites</td>
+<td style="text-align: right;">11.483137</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">C18</td>
+<td style="text-align: left;">Unknown Compounds</td>
+<td style="text-align: right;">14.900993</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">C18</td>
+<td style="text-align: left;">Known Metabolites</td>
+<td style="text-align: right;">6.605369</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">C8</td>
+<td style="text-align: left;">Unknown Compounds</td>
+<td style="text-align: right;">15.601759</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">C8</td>
+<td style="text-align: left;">Known Metabolites</td>
+<td style="text-align: right;">5.371135</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">HILIC</td>
+<td style="text-align: left;">Known Metabolites</td>
+<td style="text-align: right;">14.042632</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+</section>
+</section>
+<section id="missingness" class="level2">
+<h2 class="anchored" data-anchor-id="missingness">Missingness</h2>
+<section id="calculation-1" class="level3">
+<h3 class="anchored" data-anchor-id="calculation-1">Calculation</h3>
+<ul>
+<li>Missingness was calculated per exam, as people often conduct exam-specific analysis. The proportion of missingness for each assay, by exam is below (note, this is for people with assay data at each exam, missingness does not include, for example, people who have data at exam 1, but have no data at exam 5):</li>
+</ul>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Assay</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Overall</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">E1</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">E5</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">E6</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Amide</td>
+<td style="text-align: right;">18.831274</td>
+<td style="text-align: right;">19.2825806</td>
+<td style="text-align: right;">22.044571</td>
+<td style="text-align: right;">13.2412389</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">C18</td>
+<td style="text-align: right;">6.181399</td>
+<td style="text-align: right;">7.1368650</td>
+<td style="text-align: right;">5.248741</td>
+<td style="text-align: right;">5.5028499</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">C8</td>
+<td style="text-align: right;">0.893234</td>
+<td style="text-align: right;">0.7809743</td>
+<td style="text-align: right;">1.017541</td>
+<td style="text-align: right;">0.9517183</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">HILIC</td>
+<td style="text-align: right;">9.420818</td>
+<td style="text-align: right;">10.2592391</td>
+<td style="text-align: right;">7.988617</td>
+<td style="text-align: right;">9.7106041</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+</section>
+</section>
+<section id="output-file" class="level2">
+<h2 class="anchored" data-anchor-id="output-file">Output file</h2>
+<ul>
+<li>The file with CV and missing ness information was saved as MESA_TOPMed_Metabolite_QCfile_2025-10-18.csv</li>
+</ul>
+</section>
+</section>
+<section id="file-4-duplicate-flags" class="level1">
+<h1>File 4: Duplicate flags</h1>
+<section id="formatting-2" class="level2">
+<h2 class="anchored" data-anchor-id="formatting-2">Formatting</h2>
+<section id="clearing-up-mistakes" class="level3">
+<h3 class="anchored" data-anchor-id="clearing-up-mistakes">Clearing up mistakes:</h3>
+<ul>
+<li>Glutamic acid had different HMDBs on the original HILIC and amide assays. Per advice: for the amide assay, the metabolite Glutamic acid had the HMDB ID changed from HMDB0003339 -&gt; HMDB0000148.</li>
+</ul>
+</section>
+<section id="flagging-duplicates" class="level3">
+<h3 class="anchored" data-anchor-id="flagging-duplicates">Flagging duplicates</h3>
+<ul>
+<li><p>After the file cleaning (see above), only the HMDB_ID variable was used to flag compounds measured on more than one assay. To flag these, a variable was created “Retain”, with the following coding:</p>
+<ul>
+<li><p>0, labelled “Unique or missing HMDB ID”: an unknown compound, or a unique HMDB ID</p></li>
+<li><p>1, labelled “Duplicated HMDB ID with lowest CV”: A duplicated HMDB ID with the lowest coefficient of variation (CV) across all compounds sharing that HMDB ID</p></li>
+<li><p>2, labelled “Internal standard”: A compound used as an internal standard (generally excluded from standard analyses)</p></li>
+<li><p>3, labelled “Duplicated HMDB_ID and not lowest CV”: A duplicated HMDB ID that does <em>not</em> have the lowest coefficient of variation (CV) across all compounds sharing that HMDB ID (generally excluded from analyses where you do not want the same compound included more than once)</p></li>
+<li><p>The variable Retain had the following frequencies:</p></li>
+</ul>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Var1</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Freq</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Unique or missing HMDB ID</td>
+<td style="text-align: right;">4343</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Duplicated HMDB ID with lowest CV</td>
+<td style="text-align: right;">116</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Internal standard</td>
+<td style="text-align: right;">5</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Duplicated HMDB_ID and not lowest CV</td>
+<td style="text-align: right;">121</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div></li>
+</ul>
+</section>
+</section>
+<section id="output" class="level2">
+<h2 class="anchored" data-anchor-id="output">Output</h2>
+<ul>
+<li>The final file flagging potential duplicates was saved as MESA_TOPMed_Metabolite_Duplicateflag_2025-10-19.csv.</li>
+</ul>
+</section>
+</section>
+<section id="file-5-cleaned-metabolite-file" class="level1">
+<h1>File 5: Cleaned Metabolite File</h1>
+<section id="formatting-3" class="level2">
+<h2 class="anchored" data-anchor-id="formatting-3">Formatting</h2>
+<ul>
+<li><p>The duplicate flagging file was used to select from file 1 created above, all metabolites that had either a unique HMDB ID, or that had a duplicated HMDB ID but had the lowest CV from all those metabolites with the same HMDB ID.</p></li>
+<li><p>The final metabolite file contained information on N=4458 metabolites across N=13726 observations.</p></li>
+</ul>
 </section>
 </section>
 <section id="notes" class="level1">
@@ -539,7 +1006,7 @@ ul.task-list li input[type="checkbox"] {
  collate  en_US.UTF-8
  ctype    en_US.UTF-8
  tz       America/Chicago
- date     2025-10-16
+ date     2025-10-19
  pandoc   3.2 @ /usr/lib/rstudio-server/bin/quarto/bin/tools/x86_64/ (via rmarkdown)
  quarto   1.5.57 @ /usr/lib/rstudio-server/bin/quarto/bin/quarto
 
@@ -552,14 +1019,17 @@ ul.task-list li input[type="checkbox"] {
  codetools     0.2-20  2024-03-31 [4] CRAN (R 4.5.0)
  data.table    1.17.8  2025-07-10 [1] CRAN (R 4.5.1)
  digest        0.6.37  2024-08-19 [1] CRAN (R 4.5.0)
+ dplyr         1.1.4   2023-11-17 [1] CRAN (R 4.5.0)
  evaluate      1.0.5   2025-08-27 [1] CRAN (R 4.5.1)
  fastmap       1.2.0   2024-05-15 [1] CRAN (R 4.5.0)
+ generics      0.1.4   2025-05-09 [1] CRAN (R 4.5.1)
  glue          1.8.0   2024-09-30 [1] CRAN (R 4.5.0)
  htmltools     0.5.8.1 2024-04-04 [1] CRAN (R 4.5.0)
  htmlwidgets   1.6.4   2023-12-06 [1] CRAN (R 4.5.0)
  igraph        2.1.4   2025-01-23 [1] CRAN (R 4.5.0)
  jsonlite      2.0.0   2025-03-27 [1] CRAN (R 4.5.0)
  knitr         1.50    2025-03-16 [1] CRAN (R 4.5.0)
+ later         1.4.2   2025-04-08 [1] CRAN (R 4.5.0)
  lifecycle     1.0.4   2023-11-07 [1] CRAN (R 4.5.0)
  magrittr      2.0.4   2025-09-12 [1] CRAN (R 4.5.1)
  pillar        1.11.1  2025-09-17 [1] CRAN (R 4.5.1)
@@ -567,7 +1037,9 @@ ul.task-list li input[type="checkbox"] {
  prettyunits   1.2.0   2023-09-24 [1] CRAN (R 4.5.0)
  processx      3.8.6   2025-02-21 [2] CRAN (R 4.5.1)
  ps            1.9.1   2025-04-12 [1] CRAN (R 4.5.0)
+ quarto        1.5.1   2025-09-04 [1] CRAN (R 4.5.1)
  R6            2.6.1   2025-02-15 [1] CRAN (R 4.5.0)
+ Rcpp          1.0.14  2025-01-12 [1] CRAN (R 4.5.0)
  rlang         1.1.6   2025-04-11 [1] CRAN (R 4.5.0)
  rmarkdown     2.29    2024-11-04 [1] CRAN (R 4.5.0)
  rstudioapi    0.17.1  2024-10-22 [1] CRAN (R 4.5.0)
