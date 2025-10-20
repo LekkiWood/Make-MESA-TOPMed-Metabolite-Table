@@ -181,7 +181,7 @@ tar_target(Final_metabs_long_csv,
 #--------------------------------Quarto file---------------------------------#
 #----------------------------------------------------------------------------#
 
-tar_quarto(
+tarchetypes::tar_quarto(
   build_proteins_quarto,
   path = "/media/Analyses/Make-MESA-TOPMed-Metabolite-Table/Make-MESA-TOPMed-Metabolite-Table-README.qmd",
   quiet = FALSE
