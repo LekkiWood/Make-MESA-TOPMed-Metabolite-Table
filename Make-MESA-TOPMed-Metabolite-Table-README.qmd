@@ -1,5 +1,5 @@
 ---
-title: "Format MESA TOPMed Multi-omics Project Metabolite Data"
+title: "Format MESA TOPMed Multiomics Project Metabolite Data"
 author: "LekkiWood (LekkiWood@Gmail.com)"
 date: today
 format:
@@ -11,8 +11,8 @@ crossref:
   fig-prefix: "Figure"
 execute:
   echo: false
-  warning: true
-  message: true
+  warning: false
+  message: false
   # ensure chunks run from the project root (where _targets/ lives)
   dir: project
 pdf-engine: latexmk
@@ -39,24 +39,63 @@ if (!requireNamespace("quarto", quietly = TRUE)) {
 }
 ```
 
+\newpage
+
 # 1. Overview
+
+## Last Update
+
+-   This file was last updated on (`{r} format(Sys.Date(), "%A, %B, %d, %Y")`
 
 ## Summary
 
-This README file describes the process for taking the raw data from the Broad lab for the metabolite assays from the MESA TOPMed multi-omics project and creating the following:
+```{r}
+#| label: output-file-names
 
--   File 1: A metabolite table in wide format for the compounds (compounds are rows) and long format for the time points (one row per participant, per exam), with any data points of concern (e.g., duplicated abundances) removed.
+#Formatting metbaolite table filename
+Metabfile_out_name <- targets::tar_read(long_metabtable_filename)
+#Mapping filename
+mapping_filename <- targets::tar_read(mapping_filename)
+#QC filename
+qc_filename <- targets::tar_read(Metabolite_CV_and_missingness_filename)
+#Duplicate filename
+Duplicate_flag_filename <- targets::tar_read(Duplicates_flag_file_filename)
+#FInal metabs filename
+Metabs_clean_filename <- targets::tar_read(Final_metabs_long_filename)
 
--   File 2: A mapping file, that maps the compound identifiers from file 1 (i.e., column names) to (1) the compound name used in the X01 pilot; (2) The original metbaolite name for known compounds as supplied by the lab; (3) the ID for the compound from the [Human Metabolome Database](https://www.hmdb.ca/) (HMDB) (if available); (4)
+```
+
+This README file describes the process for taking the raw data from the Broad lab for the metabolite assays from the MESA TOPMed multiomics project and creating the following:
+
+-   File 1: A metabolite table in wide format for the compounds (compounds are rows) and long format for the time points (one row per participant, per exam), with any data points of concern (e.g., duplicated abundances) removed. Current file name: `{r} print(Metabfile_out_name)`^1^
+
+-   File 2: A mapping file, that maps the compound identifiers from file 1 (i.e., column names) to (1) the compound name used in the X01 pilot; (2) The original metabolite name for known compounds as supplied by the lab; (3) the ID for the compound from the [Human Metabolome Database](https://www.hmdb.ca/) (HMDB) (if available); and information on (1) Whether the compound is known or not (0= unknown; 1 = known); and (2) whether the compound was included in each of the three MESA TOPMed multiomics project sub-projects. Current file name: `{r} print(mapping_filename)`^1^
+
+-   File 3: A file with QC_information, including the coefficient of variation (CV) for each compound and the missingness for each compound by exam. Current file name: `{r} print(qc_filename)`^1^
+
+-   File 4: A file with flags for duplicated *compounds*. Current file name: `{r} print(Duplicate_flag_filename)` ^1^
+
+-   File 5: A final metabolite table, formatted as in file 1, and where the same compound was measured in more than one assay, only assay with the lowest CV is retained in this file. Current file name: `{r} print(Metabs_clean_filename)` ^1^
+
+## Important notes:
+
+-   You should always check you have the most recent files! I use dynamic dates, so this can be done by checking that your files match the versions on Github:
+
+    -   My profile can be found [here](https://github.com/LekkiWood)
+
+    -   My repositories are listed [here](https://github.com/LekkiWood?tab=repositories)
+
+    -   The most recent version of this PDF README file can be found [here](https://github.com/LekkiWood/Make-MESA-TOPMed-Metabolite-Table/blob/main/Make-MESA-TOPMed-Metabolite-Table-README.pdf)
+
+    -   The most recent version of the source code for this README file can be found [here](https://github.com/LekkiWood/Make-MESA-TOPMed-Metabolite-Table/blob/main/Make-MESA-TOPMed-Metabolite-Table-README.qmd)
+
+    -   The most recent source code for creating the output files can be found [here](https://github.com/LekkiWood/Make-MESA-TOPMed-Metabolite-Table/blob/main/_targets.R)
+
+    -   If you want to know the all the pain I went through to create these, or check I am not trying to cheat the system, my entire R history for this project can be found [here](https://github.com/LekkiWood/Make-MESA-TOPMed-Metabolite-Table/blob/main/.Rhistory)
+
+\newpage
 
 # 1. Unresolved concerns
-
-```{r}
-#| label: load-file-info
-
-QC_info <- targets::tar_read(build_metabs_QC)
-Metabfile_out_name <- targets::tar_read(long_metabtable_filename)
-```
 
 ## Assay questions
 
@@ -72,9 +111,9 @@ Metabfile_out_name <- targets::tar_read(long_metabtable_filename)
 
 ### Unresolved
 
--   LPC 16:0/0:0 is measured twice on the C8 assay, with the same HMDB, but different assigned LAB IDs. For now, the compound with the Compound ID in the X01 of "TF04" is renamed as LPC 16:0/0:0_v2.
+-   Most duplicated compounds are measured on different assays. One exception is LPC 16:0/0:0, which is measured twice on the C8 assay, with the same HMDB, but different assigned LAB IDs. For now, the compound with the Compound ID in the X01 of "TF04" is renamed as LPC 16:0/0:0_v2.
 
--   Some lipids have the same HMDB ID, but the names are not listed as synonyms e.g., Cer 40:1;O2 (C8 assay) is not listed as a synonym for 18:1, and Cer 42:2;O2_A is not listed for a synonym for Cer 18:1;O2/24:1
+-   Some lipids have the same HMDB ID, but the different common metabolite names, and these names are not listed as synonyms in the [HMDB](https://www.hmdb.ca/) (e.g., Cer 40:1;O2 (C8 assay) is not listed as a synonym for 18:1 (HILIC), and Cer 42:2;O2_A (C8) is not listed for a synonym for Cer 18:1;O2/24:1 (HILIC). For now, these are treated as separate compounds.
 
     |         |             |                  |       |
     |---------|-------------|------------------|-------|
@@ -88,9 +127,9 @@ Metabfile_out_name <- targets::tar_read(long_metabtable_filename)
     | QI04540 | HMDB0004953 | Cer 18:1;O2/24:1 | hilic |
     | QI4265  | HMDB0004953 | Cer 42:2;O2_A    | c8    |
 
-### Probably resolved, but check with Clary
+### Probably resolved, but still to be checked with lab
 
--   Glutamic acid had different HMDBs on the original HILIC and amide assays. Per advice: The HMDB from the HILIC was retained for both assays.
+-   Glutamic acid had different HMDBs on the original HILIC and amide assays. Per advice: The HMDB from the HILIC was retained for both assays, and these were treated as the same compound.
 
 |               |             |               |       |
 |---------------|-------------|---------------|-------|
@@ -98,27 +137,35 @@ Metabfile_out_name <- targets::tar_read(long_metabtable_filename)
 | QI18171       | HMDB0000148 | Glutamic acid | hilic |
 | Glutamic.acid | HMDB0003339 | Glutamic acid | amide |
 
--   For the amide assay, the compound with HMDB ID "HMDB0000122" had a different name to that used for the HILIC and C18 assays (but both names "correct" - using different conventions). They were treated as the same compounds.
+-   For the amide assay, the compound with HMDB ID "HMDB0000122" had a different name to that used for the HILIC and C18 assays (but both names "correct" - using different conventions). They were treated as the same compounds when screening for duplicates.
 
-+---------------------+-------------+---------------------+-------------+
-| Lab ID              | HMDB        | Metabolite          | Assay       |
-+---------------------+-------------+---------------------+-------------+
-| Glucose.Fructose.   | HMDB0000122 | Glucose/Fructose/   | amide       |
-|                     |             |                     |             |
-| Galactose_waterloss |             | Galactose_waterloss |             |
-+---------------------+-------------+---------------------+-------------+
-| QI3656              | HMDB0000122 | Hexose              | c18         |
-+---------------------+-------------+---------------------+-------------+
-| QI14125             | HMDB0000122 | Hexose              | hilic       |
-+---------------------+-------------+---------------------+-------------+
++---------------------+----------------+---------------------+----------------+
+| Lab ID              | HMDB           | Metabolite          | Assay          |
++---------------------+----------------+---------------------+----------------+
+| Glucose.Fructose.   | HMDB0000122    | Glucose/Fructose/   | amide          |
+|                     |                |                     |                |
+| Galactose_waterloss |                | Galactose_waterloss |                |
++---------------------+----------------+---------------------+----------------+
+| QI3656              | HMDB0000122    | Hexose              | c18            |
++---------------------+----------------+---------------------+----------------+
+| QI14125             | HMDB0000122    | Hexose              | hilic          |
++---------------------+----------------+---------------------+----------------+
 
 ## For Lekki
 
 -   Table hyperlinks are still not rendering in Quarto and no one can fix it.
 
+\newpage
+
 # 2. File 1: Formatted Metabolite Assay Tables
 
-## Input filenames
+```{r}
+#| label: load-file-info
+
+QC_info <- targets::tar_read(build_metabs_QC)
+```
+
+## Input file names
 
 ### Raw metabolite tables
 
@@ -148,7 +195,7 @@ Metabfile_out_name <- targets::tar_read(long_metabtable_filename)
 
 ### Amide
 
--   The amide sample info file contained information on N=`{r} QC_info$sample_info_dims$sample_info_dims_amide[1]` TOMIDs (each corresponding to one participant's abundances at one exam).
+-   The amide sample info file contained information on N=`{r} QC_info$sample_info_dims$sample_info_dims_amide[1]` TOM IDs (each corresponding to one participant's abundances at one exam).
 
 -   Metabolites were renamed according to the following rules:
 
@@ -158,11 +205,11 @@ Metabfile_out_name <- targets::tar_read(long_metabtable_filename)
 
     -   The amide assay only has known compounds.
 
--   When the TOMIDs in the sample info file were extracted from the original metabolite table, there were N=`{r} QC_info$phase1_dims$phase1_dims_amide` TOMIDs remaining.^1^
+-   When the TOMIDs in the sample info file were extracted from the original metabolite table, there were N=`{r} QC_info$phase1_dims$phase1_dims_amide` TOM IDs remaining.^2^
 
--   We searched for duplicated TOMIDs, and N=`{r} QC_info$duplicate_TOMIDs$duplicate_column_names_amide` were found.^1^
+-   We searched for duplicated TOMIDs, and N=`{r} QC_info$duplicate_TOMIDs$duplicate_column_names_amide` were found.^2^
 
--   One value for TOM148122 had an incorrect rounding problem (1+2559:2584.03935869994933). This was recoded to missing.
+-   One value for TOM148122 had an unusual value - likely an incorrect rounding problem (1+2559:2584.03935869994933). This was re-coded to missing.
 
 -   The table was transposed. The following duplicates were identified:
 
@@ -172,12 +219,11 @@ Metabfile_out_name <- targets::tar_read(long_metabtable_filename)
       knitr::kable(format="latex")
     ```
 
-    -   
     -   The duplicates were removed leaving a final table of N= `{r} QC_info$final_table_dims$final_table_dims_amide[2]-4` metabolites across `{r} QC_info$final_table_dims$final_table_dims_amide[1]` observations.
 
 ### C8
 
--   The C8 sample info file contained information on N=`{r} QC_info$sample_info_dims$sample_info_dims_C8[1]` TOMIDs (each corresponding to one participant's abundances at one exam).
+-   The C8 sample info file contained information on N=`{r} QC_info$sample_info_dims$sample_info_dims_C8[1]` TOM IDs (each corresponding to one participant's abundances at one exam).
 
 -   Metabolites were renamed according to the following rules:
 
@@ -189,25 +235,25 @@ Metabfile_out_name <- targets::tar_read(long_metabtable_filename)
 
         -   The lab ID (arbitrarily assigned by The Broad) assigned within the X01 study (variable: Compound_ID_X01; arbitrarily chosen from the MESA2 and MESA PILOT names by Lekki) was prefixed with the string "C8\_".
 
--   When the TOMIDs in the sample info file were extracted from the original metabolite table, there were N=`{r} QC_info$phase1_dims$phase1_dims_C8` TOMIDs remaining.^1^
+-   When the TOMIDs in the sample info file were extracted from the original metabolite table, there were N=`{r} QC_info$phase1_dims$phase1_dims_C8` TOMIDs remaining.^2^
 
--   We searched for duplicated TOMIDs, and N=`{r} QC_info$duplicate_TOMIDs$duplicate_column_names_C8` were found.^1^
+-   We searched for duplicated TOMIDs, and N=`{r} QC_info$duplicate_TOMIDs$duplicate_column_names_C8` were found.^2^
 
 -   The the table was transposed. The following duplicates were identified:
 
     ```{r}
 
     #| label: tbl-C8-dupes 
-    #| tbl-cap: "Duplicate metabolite abundances in metabolites from C8 assay, supplied by MESA DCC" #| tbl-colwidths: [50, 50] # Example: First column 30%, second 70%
+    #| tbl-cap: "Duplicate metabolite abundances in metabolites from C8 assay, supplied by MESA DCC"
 
-    knitr::kable(QC_info$duplicates_in_raw_tables$C8_dupes, format="html")
+    knitr::kable(QC_info$duplicates_in_raw_tables$C8_dupes, format="latex")
     ```
 
 -   The duplicates were removed leaving a final table of N=`{r} QC_info$final_table_dims$final_table_dims_C8[2] - 4` metabolites across N=`{r} QC_info$final_table_dims$final_table_dims_C8[1]` observations.
 
 ### C18
 
--   The C18 sample info file contained information on N=`{r} QC_info$sample_info_dims$sample_info_dims_C18[1]` TOMIDs (each corresponding to one participant's abundances at one exam).
+-   The C18 sample info file contained information on N=`{r} QC_info$sample_info_dims$sample_info_dims_C18[1]` TOM IDs (each corresponding to one participant's abundances at one exam).
 
 -   Metabolites were renamed according to the following rules:
 
@@ -219,9 +265,9 @@ Metabfile_out_name <- targets::tar_read(long_metabtable_filename)
 
         -   The lab ID (arbitrarily assigned by The Broad) assigned within the X01 study (variable: Compound_ID_X01; arbitrarily chosen from the MESA2 and MESA PILOT names by Lekki) was prefixed with the string "C18\_".
 
--   When the TOMIDs in the sample info file were extracted from the original metabolite table, there were N=`{r} QC_info$phase1_dims$phase1_dims_C18` TOMIDs remaining.^1^
+-   When the TOMIDs in the sample info file were extracted from the original metabolite table, there were N=`{r} QC_info$phase1_dims$phase1_dims_C18` TOMIDs remaining.^2^
 
--   We searched for duplicated TOMIDs, and N=`{r} QC_info$duplicate_TOMIDs$duplicate_column_names_C18` were found.^1^
+-   We searched for duplicated TOMIDs, and N=`{r} QC_info$duplicate_TOMIDs$duplicate_column_names_C18` were found.^2^
 
 -   The the table was transposed. The following duplicates were identified:
 
@@ -230,14 +276,14 @@ Metabfile_out_name <- targets::tar_read(long_metabtable_filename)
     #| label: tbl-C18-dupes 
     #| tbl-cap: "Duplicate metabolite abundances in metabolites from C18 assay, supplied by MESA DCC" #| tbl-colwidths: [50, 50] # Example: First column 30%, second 70%
 
-    knitr::kable(QC_info$duplicates_in_raw_tables$C18_dupes, format="html")
+    knitr::kable(QC_info$duplicates_in_raw_tables$C18_dupes, format="latex")
     ```
 
 -   The duplicates were removed leaving a final table of N=`{r} QC_info$final_table_dims$final_table_dims_C18[2] - 4` metabolites across N=`{r} QC_info$final_table_dims$final_table_dims_C18[1]` observations.
 
 ### HILIC
 
--   The HILIC sample info file contained information on N=`{r} QC_info$sample_info_dims$sample_info_dims_HILIC[1]` TOMIDs (each corresponding to one participant's abundances at one exam).
+-   The HILIC sample info file contained information on N=`{r} QC_info$sample_info_dims$sample_info_dims_HILIC[1]` TOM IDs (each corresponding to one participant's abundances at one exam).
 
 -   Metabolites were renamed according to the following rules:
 
@@ -249,18 +295,18 @@ Metabfile_out_name <- targets::tar_read(long_metabtable_filename)
 
         -   The lab ID (arbitrarily assigned by The Broad) assigned within the X01 study (variable: Compound_ID_X01; arbitrarily chosen from the MESA2 and MESA PILOT names by Lekki) was prefixed with the string "HILIC\_".
 
--   When the TOMIDs in the sample info file were extracted from the original metabolite table, there were N=`{r} QC_info$phase1_dims$phase1_dims_HILIC` TOMIDs remaining.^1^
+-   When the TOMIDs in the sample info file were extracted from the original metabolite table, there were N=`{r} QC_info$phase1_dims$phase1_dims_HILIC` TOMIDs remaining.^2^
 
--   We searched for duplicated TOMIDs, and N=`{r} QC_info$duplicate_TOMIDs$duplicate_column_names_HILIC` were found.^1^
+-   We searched for duplicated TOMIDs, and N=`{r} QC_info$duplicate_TOMIDs$duplicate_column_names_HILIC` were found.^2^
 
 -   The the table was transposed. The following duplicates were identified:
 
     ```{r}
 
     #| label: tbl-HILIC-dupes 
-    #| tbl-cap: "Duplicate metabolite abundances in metabolites from HILIC assay, supplied by MESA DCC" #| tbl-colwidths: [50, 50] # Example: First column 30%, second 70%
+    #| tbl-cap: "Duplicate metabolite abundances in metabolites from HILIC assay, supplied by MESA DCC" 
 
-    knitr::kable(QC_info$duplicates_in_raw_tables$HILIC_dupes, format="html")
+    knitr::kable(QC_info$duplicates_in_raw_tables$HILIC_dupes, format="latex")
     ```
 
 -   The duplicates were removed leaving a final table of N=`{r} QC_info$final_table_dims$final_table_dims_HILIC[2] - 4` metabolites across N=`{r} QC_info$final_table_dims$final_table_dims_HILIC[1]` observations.
@@ -279,7 +325,9 @@ Metabfile_out_name <- targets::tar_read(long_metabtable_filename)
 
 ### Metabolite table
 
-The metabolite table was saved in long form with the file name `{r} print(Metabfile_out_name)`^2^
+The metabolite table was saved in long form with the file name `{r} print(Metabfile_out_name)`^1^
+
+\newpage
 
 # File 2: Mapping file
 
@@ -288,10 +336,9 @@ The metabolite table was saved in long form with the file name `{r} print(Metabf
 #| label: read-in-mapping-QC-info
 
 QC_info_mapping <- targets::tar_read(build_mapping_QC)
-mapping_filename <- targets::tar_read(mapping_filename)
 ```
 
-## Input filenames
+## Input file names
 
 ### Raw metabolite tables
 
@@ -419,7 +466,9 @@ mapping_filename <- targets::tar_read(mapping_filename)
 
 ### Mapping file
 
-The metabolite table was saved in long form with the file name `{r} print(mapping_filename)`^2^
+The metabolite table was saved in long form with the file name `{r} print(mapping_filename)`^1^
+
+\newpage
 
 # File 3: QC file
 
@@ -428,7 +477,6 @@ The metabolite table was saved in long form with the file name `{r} print(mappin
 #| label: read-in-QC-info
 
 CV_table <- targets::tar_read(Metabolite_CV_and_missingness)
-qc_filename <- targets::tar_read(Metabolite_CV_and_missingness_filename)
 
 ```
 
@@ -492,7 +540,7 @@ qc_filename <- targets::tar_read(Metabolite_CV_and_missingness_filename)
 CV_table |>
   dplyr::group_by(Assay) |>
   dplyr::summarise(Mean_CV = mean(cv_percent, na.rm=TRUE)) |>
- knitr::kable(format = "html")
+ knitr::kable(format = "latex")
 
   
 ```
@@ -511,7 +559,7 @@ CV_table |>
   dplyr::mutate(Known = dplyr::case_when(Known==1 ~ "Known Metabolites",
                                          Known==0 ~ "Unknown Compounds",
                                          TRUE ~ NA_character_)) |>
- knitr::kable(format = "html")
+ knitr::kable(format = "latex")
 
 
 ```
@@ -536,25 +584,26 @@ CV_table |>
                    E6 = mean(missing_exam_6, na.rm=TRUE)
                    
                    ) |>
- knitr::kable(format = "html")
+ knitr::kable(format = "latex")
 
 ```
 
 ## Output file
 
--   The file with CV and missing ness information was saved as `{r} print(qc_filename)`
+-   The file with CV and missing ness information was saved as `{r} print(qc_filename)` ^1^
+
+\newpage
 
 # File 4: Duplicate flags
 
 ```{r}
 
 Duplicate_flag_file <- targets::tar_read(Duplicates_flag_file)
-Duplicate_flag_filename <- targets::tar_read(Duplicates_flag_file_filename)
 ```
 
 ## Formatting
 
-### Clearing up mistakes:
+### Cleaning / Harmonizing names:
 
 -   Glutamic acid had different HMDBs on the original HILIC and amide assays. Per advice: for the amide assay, the metabolite Glutamic acid had the HMDB ID changed from HMDB0003339 -\> HMDB0000148.
 
@@ -579,12 +628,12 @@ Duplicate_flag_filename <- targets::tar_read(Duplicates_flag_file_filename)
     #| tbl-cap: "Information on potential duplicates"
 
     table(Duplicate_flag_file$Retain) |> 
-      knitr::kable(format="html")
+      knitr::kable(format="latex")
     ```
 
 ## Output
 
--   The final file flagging potential duplicates was saved as `{r} print(Duplicate_flag_filename)`.
+-   The final file flagging potential duplicates was saved as `{r} print(Duplicate_flag_filename)`. ^1^
 
 # File 5: Cleaned Metabolite File
 
@@ -601,13 +650,19 @@ final_file_info <- targets::tar_read(Final_metabs_long_info)
 
 -   The final metabolite file contained information on N=`{r} print(final_file_info)[2] - 5` metabolites across N=`{r} final_file_info[1]` observations.
 
+## Output file name
+
+-   The final metabolite file without duplicated compounds was saved as `{r} print(Metabs_clean_filename)` ^1^
+
+\newpage
+
 # Notes
 
 ## Footnotes
 
-^1^Missing, or "NULL" values here arise from using a standard script for all QC to flag potential issues. Missing, or "NULL" values typically indicate a lack of potentially concerning issue.
+^1^Dates are dynamic
 
-^2^Dates are dynamic
+^2^Missing, or "NULL" values here arise from using a standard script for all QC to flag potential issues. Missing, or "NULL" values typically indicate a lack of potentially concerning issue.
 
 ## Session info
 
